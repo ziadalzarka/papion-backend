@@ -1,0 +1,10 @@
+{
+  "$schema": "../src/config/config.schema.json",
+  "database": {
+    "host": "167.71.40.160",
+    "port": 27017,
+    "database": "tester",
+    "username": "admin",
+    "password": "loVeA6irl"
+  }
+}

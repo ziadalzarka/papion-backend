@@ -1,0 +1,128 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body * {
+  font-family: sans-serif;
+}
+
+.container {
+  max-width: 600px;
+  background: #0c1711;
+  margin: auto;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.splitter {
+  background: #1ed55f;
+  height: 8px;
+  width: 100%;
+}
+
+.logo {
+  margin-top: 12px;
+  width: 40%;
+}
+
+[color="primary"] {
+  color: #1ed55f;
+}
+
+[color="light"] {
+  color: #eee;
+}
+
+h1,
+h2,
+h4,
+p {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+p {
+  padding-right: 10%;
+  padding-left: 10%;
+}
+
+.row {
+  display: inline-block;
+  margin-top: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  margin: auto;
+  margin-top: 24px;
+}
+
+.card .card-image {
+  width: 300px;
+  height: 300px;
+  box-shadow: 0 0 18px black;
+}
+
+.btn {
+  display: inline-block;
+  outline: none;
+  user-select: none;
+  border: none;
+  padding: 8px;
+  padding-right: 32px;
+  padding-left: 32px;
+  border-radius: 50px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #1ed55f;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2be16c;
+}
+
+.btn-primary:active {
+  background: #18a84b;
+}
+
+@media screen and (max-width: 440px) {
+  p {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  .logo {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 280px) {
+  p {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .logo {
+    width: 90%;
+  }
+}

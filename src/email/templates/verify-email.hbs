@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+  <link rel="stylesheet" href="{{style}}">
+</head>
+
+<body>
+  <div class="container flex-column align-center text-center">
+
+    <div class="splitter"></div>
+
+    <a href="{{home}}"> <img class="logo" src="{{logo}}" alt="logo"></a>
+
+    <h2 color="light">
+      Verify Your Email
+    </h2>
+
+    <p color="light" class="paragraph">
+      Hey there, {{user.firstName}}! Please click on the button below to verify
+      your email and activate your
+      <span color="primary">PitchMaster</span>
+      account.
+    </p>
+
+    <div class="row">
+      <a class="btn btn-primary" href="{{links.verify}}{{code}}" target="_blank">Verify my email</a>
+    </div>
+  </div>
+</body>
+
+</html>
