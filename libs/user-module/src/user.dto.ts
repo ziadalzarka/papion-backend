@@ -1,8 +1,8 @@
-import { User } from 'app/user/user.schema';
+import { User } from './user.schema';
 import { BusinessCategory } from './business-category.dto';
 import { Field, Int, ObjectType, ID, InputType, ArgsType, createUnionType } from 'type-graphql';
 import { DatabaseEntity } from '@gray/mongoose-database';
-import { Address, AddressInput } from 'app/user/address.dto';
+import { Address, AddressInput } from './address.dto';
 import { UserType } from './user-type.dto';
 
 @ObjectType()

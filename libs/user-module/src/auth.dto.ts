@@ -1,6 +1,5 @@
-import { UserEntity, UserEntityType } from 'app/user/user.dto';
+import { UserEntity, UserEntityType } from './user.dto';
 import { ObjectType, Field, InputType } from 'type-graphql';
-import { User } from 'app/user/user.schema';
 
 @ObjectType()
 export class AuthPayload {

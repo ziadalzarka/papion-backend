@@ -1,8 +1,8 @@
 import { BusinessCategory } from './business-category.dto';
 import { schema, field, buildSchema, unique } from 'mongoose-schema-decorators';
 import * as mongoose from 'mongoose';
-import { Address } from 'app/user/address.dto';
-import { AuthPayload } from 'app/user/auth.dto';
+import { Address } from './address.dto';
+import { AuthPayload } from './auth.dto';
 import { UserType } from './user-type.dto';
 import { UserEntity, CreateBusinessUserInput, CreateClientUserInput, UserEntityType } from './user.dto';
 

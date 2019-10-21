@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { UserModule } from './user/user.module';
 import { WeddingWebsiteModule } from './wedding-website/wedding-website.module';
 import { MongooseDatabaseModule } from '@gray/mongoose-database';
+import { UserModule } from '@gray/user-module';
 
 @Module({
   imports: [

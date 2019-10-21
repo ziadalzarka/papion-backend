@@ -7,11 +7,6 @@ export class ConfigUtils {
     return config.get('database');
   }
 
-  static get databaseUrl(): string {
-    const { host, database, port, username, password } = this.database;
-    return `mongodb://${username}:${password}@${host}:${port}/${database}`;
-  }
-
   static get metadata(): ApplicationMetadata {
     return config.get('metadata');
   }

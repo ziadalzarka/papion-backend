@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthResolver } from 'app/user/auth.resolver';
+import { AuthResolver } from './auth.resolver';
 import { UserService } from './user.service';
 import { userProviders } from './user.provider';
 import { MongooseDatabaseModule } from '@gray/mongoose-database';

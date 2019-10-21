@@ -24,6 +24,18 @@
       ],
       "@gray/app-config/*": [
         "libs/app-config/src/*"
+      ],
+      "@gray/graphql-essentials": [
+        "libs/graphql-essentials/src"
+      ],
+      "@gray/graphql-essentials/*": [
+        "libs/graphql-essentials/src/*"
+      ],
+      "@gray/user-module": [
+        "libs/user-module/src"
+      ],
+      "@gray/user-module/*": [
+        "libs/user-module/src/*"
       ]
     }
   },

@@ -10,6 +10,14 @@
     "app-config": {
       "root": "libs/app-config",
       "sourceRoot": "libs/app-config/src"
+    },
+    "graphql-essentials": {
+      "root": "libs/graphql-essentials",
+      "sourceRoot": "libs/graphql-essentials/src"
+    },
+    "user-module": {
+      "root": "libs/user-module",
+      "sourceRoot": "libs/user-module/src"
     }
   }
 }

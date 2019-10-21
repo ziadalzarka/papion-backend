@@ -5,7 +5,9 @@ export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION',
     useFactory: (): Promise<typeof mongoose> => {
-      return mongoose.connect(ConfigUtils.databaseUrl);
+      const { host, database, port, username, password } = ConfigUtils.database;
+      const databaseUrl = `mongodb://${username}:${password}@${host}:${port}/${database}`;
+      return mongoose.connect(databaseUrl);
     },
   },
 ];

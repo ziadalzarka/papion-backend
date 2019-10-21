@@ -1,4 +1,4 @@
-import { GraphQLException } from 'app/graphql.exception';
+import { GraphQLException } from '@gray/graphql-essentials';
 
 export class UnauthorizedException extends GraphQLException {
   constructor() {

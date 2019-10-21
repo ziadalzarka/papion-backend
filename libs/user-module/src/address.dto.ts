@@ -1,5 +1,5 @@
-import { City } from 'app/user/city.dto';
-import { Country } from 'app/user/country.dto';
+import { City } from './city.dto';
+import { Country } from './country.dto';
 import { ObjectType, Field, InputType } from 'type-graphql';
 
 @ObjectType()
