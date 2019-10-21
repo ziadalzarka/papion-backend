@@ -3,14 +3,21 @@ import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/commo
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
+import { Reflector } from '@nestjs/core';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-  constructor(private authTokenService: AuthTokenService) { }
-  canActivate(
+  constructor(private authTokenService: AuthTokenService, private reflector: Reflector, private userService: UserService) { }
+
+  private isUserResolveEnabled(context: ExecutionContext) {
+    return this.reflector.get<string[]>('resolve_user', context.getHandler());
+  }
+
+  async canActivate(
     context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  ): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
     if (req.headers.authorization) {
@@ -19,6 +26,9 @@ export class AuthGuard implements CanActivate {
       if (!decoded) {
         throw new UnauthorizedException();
       } else {
+        if (this.isUserResolveEnabled(context)) {
+          req.user = await this.userService._resolveUser(decoded._id);
+        }
         return true;
       }
     } else {

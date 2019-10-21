@@ -8,19 +8,12 @@ import { AuthenticationScope } from './authentication-scope.dto';
 @Injectable()
 export class AuthTokenService {
 
-  private _cache = {};
-
   validate(token: string) {
-    const decoded = jwt.verify(token, ConfigUtils.token.auth) as AuthenticationToken;
-    return decoded.iat >= this._cache[decoded._id] ? decoded : false;
+    return jwt.verify(token, ConfigUtils.token.auth) as AuthenticationToken;
   }
 
   generateToken(_id: string, scopes: AuthenticationScope[]) {
-    // store what the date of the last valid token issued is
-    this._cache[_id] = Math.floor(Date.now() / 1000);
-    // add _id of the user for easy lookups in the database
-    const token = jwt.sign({ _id, scopes }, ConfigUtils.token.auth);
-    return token;
+    return jwt.sign({ _id, scopes }, ConfigUtils.token.auth);
   }
 
 }

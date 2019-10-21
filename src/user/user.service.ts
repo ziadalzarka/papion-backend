@@ -8,6 +8,7 @@ import { UnauthorizedError } from 'type-graphql';
 import { UnionUserEntity, UserEntityType } from './user.dto';
 import { AuthenticationScope } from './authentication-scope.dto';
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
+import { ObjectID } from 'mongodb';
 
 @Injectable()
 export class UserService {
@@ -37,11 +38,15 @@ export class UserService {
     const hash = entity.password;
     const valid = bcrypt.compareSync(password, hash);
     if (valid) {
-      // generate token only needs _id
+      // generate token only needs _id and scopes
       const token = this.authTokenService.generateToken(entity._id.toHexString(), [AuthenticationScope.client]);
       return { token, user: UnionUserEntity(entity) };
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  async _resolveUser(_id: string | ObjectID) {
+    return await this.userModel.findById(_id);
   }
 }

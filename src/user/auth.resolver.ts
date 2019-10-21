@@ -1,11 +1,12 @@
 import { UserService } from './user.service';
 import { ObjectID } from 'bson';
 import { Resolver, Query, Args, Context } from '@nestjs/graphql';
-import { UserEntity, ClientUserEntity, BusinessUserEntity } from 'app/user/user.dto';
+import { UserEntity, ClientUserEntity, BusinessUserEntity, UnionUserEntity } from 'app/user/user.dto';
 import { AuthPayload, LogInPayload } from 'app/user/auth.dto';
-import { UseGuards, ClassSerializerInterceptor, UseInterceptors, SerializeOptions } from '@nestjs/common';
+import { UseGuards, ClassSerializerInterceptor, UseInterceptors, SerializeOptions, Logger } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { UserType } from './user-type.dto';
+import { ResolveUser } from './resolve-user.decorator';
 
 @Resolver('User')
 export class AuthResolver {
@@ -14,9 +15,9 @@ export class AuthResolver {
 
   @Query(returns => UserEntity)
   @UseGuards(AuthGuard)
+  @ResolveUser()
   async me(@Context() { req, res }) {
-    console.log('hello');
-    return new ClientUserEntity({ _id: new ObjectID(), name: 'hello', email: 'zizohotot@gmail.com', userType: UserType.Client });
+    return UnionUserEntity(req.user);
   }
 
   @Query(returns => AuthPayload)
