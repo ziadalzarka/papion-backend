@@ -8,8 +8,26 @@
               "$schema": {
                   "type": "string"
               },
+              "metadata": {
+                  "$ref": "#/definitions/ApplicationMetadata"
+              },
               "database": {
                   "$ref": "#/definitions/DatabaseConfiguration"
+              },
+              "token": {
+                  "$ref": "#/definitions/TokenConfiguration"
+              }
+          },
+          "additionalProperties": false
+      },
+      "ApplicationMetadata": {
+          "type": "object",
+          "properties": {
+              "domain": {
+                  "type": "string"
+              },
+              "cookieMaxAge": {
+                  "type": "number"
               }
           },
           "additionalProperties": false
@@ -30,6 +48,15 @@
                   "type": "string"
               },
               "password": {
+                  "type": "string"
+              }
+          },
+          "additionalProperties": false
+      },
+      "TokenConfiguration": {
+          "type": "object",
+          "properties": {
+              "auth": {
                   "type": "string"
               }
           },

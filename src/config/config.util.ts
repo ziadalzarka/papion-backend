@@ -1,5 +1,5 @@
 import * as config from 'config';
-import { DatabaseConfiguration } from './config.interface';
+import { DatabaseConfiguration, ApplicationMetadata, TokenConfiguration } from './config.interface';
 
 export class ConfigUtils {
 
@@ -9,6 +9,14 @@ export class ConfigUtils {
 
   static get databaseUrl(): string {
     const { host, database, port, username, password } = this.database;
-    return `mongodb://${host}:${port}/${database}?user=${username}&pass=${password}`;
+    return `mongodb://${username}:${password}@${host}:${port}/${database}`;
+  }
+
+  static get metadata(): ApplicationMetadata {
+    return config.get('metadata');
+  }
+
+  static get token(): TokenConfiguration {
+    return config.get('token');
   }
 }

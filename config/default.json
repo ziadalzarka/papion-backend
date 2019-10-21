@@ -1,10 +1,17 @@
 {
   "$schema": "../src/config/config.schema.json",
+  "metadata": {
+    "domain": "localhost",
+    "cookieMaxAge": 604800
+  },
   "database": {
     "host": "167.71.40.160",
     "port": 27017,
-    "database": "tester",
-    "username": "admin",
+    "database": "papion",
+    "username": "papion",
     "password": "loVeA6irl"
+  },
+  "token": {
+    "auth": "cd1941f655a7a1fc4c0b1a76c434ed819c862f6414ab4564b8e3b9e67f1c5333"
   }
 }

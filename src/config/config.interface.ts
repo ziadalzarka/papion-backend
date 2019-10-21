@@ -1,3 +1,8 @@
+export interface ApplicationMetadata {
+  domain?: string;
+  cookieMaxAge?: number;
+}
+
 export interface DatabaseConfiguration {
   host?: string;
   database?: string;
@@ -6,7 +11,13 @@ export interface DatabaseConfiguration {
   password?: string;
 }
 
+export interface TokenConfiguration {
+  auth?: string;
+}
+
 export interface ConfigurationSchema {
   $schema?: string;
+  metadata?: ApplicationMetadata;
   database?: DatabaseConfiguration;
+  token?: TokenConfiguration;
 }

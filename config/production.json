@@ -1,1 +1,6 @@
-{}
+{
+  "$schema": "../src/config/config.schema.json",
+  "metadata": {
+    "domain": "papion.love"
+  }
+}
