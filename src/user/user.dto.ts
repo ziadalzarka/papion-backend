@@ -1,10 +1,10 @@
 import { User } from 'app/user/user.schema';
 import { BusinessCategory } from './business-category.dto';
 import { Field, Int, ObjectType, ID, InputType, ArgsType, createUnionType } from 'type-graphql';
-import { DatabaseEntity } from 'app/database/database.dto';
+import { DatabaseEntity } from '@gray/mongoose-database';
 import { Address, AddressInput } from 'app/user/address.dto';
 import { UserType } from './user-type.dto';
-import { Expose, Exclude, Transform } from 'class-transformer';
+
 @ObjectType()
 export class BaseUserEntity<T> extends DatabaseEntity<T> {
   @Field()

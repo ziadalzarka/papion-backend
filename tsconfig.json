@@ -12,8 +12,22 @@
     "paths": {
       "app/*": [
         "./src/*"
+      ],
+      "@gray/mongoose-database": [
+        "libs/mongoose-database/src"
+      ],
+      "@gray/mongoose-database/*": [
+        "libs/mongoose-database/src/*"
+      ],
+      "@gray/app-config": [
+        "libs/app-config/src"
+      ],
+      "@gray/app-config/*": [
+        "libs/app-config/src/*"
       ]
     }
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,5 +1,15 @@
 {
   "language": "ts",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "projects": {
+    "mongoose-database": {
+      "root": "libs/mongoose-database",
+      "sourceRoot": "libs/mongoose-database/src"
+    },
+    "app-config": {
+      "root": "libs/app-config",
+      "sourceRoot": "libs/app-config/src"
+    }
+  }
 }

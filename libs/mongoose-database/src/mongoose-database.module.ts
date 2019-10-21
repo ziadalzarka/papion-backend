@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { databaseProviders } from 'app/database/database.providers';
+import { databaseProviders } from './mongoose-database.providers';
 import * as mongoose from 'mongoose';
 
 mongoose.set('useNewUrlParser', true);
@@ -11,4 +11,4 @@ mongoose.set('useUnifiedTopology', true);
   providers: [...databaseProviders],
   exports: [...databaseProviders],
 })
-export class DatabaseModule { }
+export class MongooseDatabaseModule { }

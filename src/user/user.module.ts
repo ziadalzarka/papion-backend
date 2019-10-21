@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { AuthResolver } from 'app/user/auth.resolver';
 import { UserService } from './user.service';
 import { userProviders } from './user.provider';
-import { DatabaseModule } from 'app/database/database.module';
+import { MongooseDatabaseModule } from '@gray/mongoose-database';
 import { UserResolver } from './user.resolver';
 import { AuthTokenService } from './auth-token.service';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [MongooseDatabaseModule],
   providers: [
     AuthResolver,
     UserService,
