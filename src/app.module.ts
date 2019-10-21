@@ -1,3 +1,4 @@
+import { ConfigUtils } from 'app/config/config.util';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { WeddingWebsiteModule } from './wedding-website/wedding-website.module';

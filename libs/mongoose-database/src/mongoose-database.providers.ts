@@ -1,13 +1,14 @@
 import * as mongoose from 'mongoose';
-import { ConfigUtils } from 'app/config/config.util';
+import { MongooseDatabaseConfiguration } from './mongoose-database.interface';
 
-export const databaseProviders = [
-  {
-    provide: 'DATABASE_CONNECTION',
-    useFactory: (): Promise<typeof mongoose> => {
-      const { host, database, port, username, password } = ConfigUtils.database;
-      const databaseUrl = `mongodb://${username}:${password}@${host}:${port}/${database}`;
-      return mongoose.connect(databaseUrl);
+export const generateDatabaseProviders = ({ host, database, port, username, password }: MongooseDatabaseConfiguration) => {
+  return [
+    {
+      provide: 'DATABASE_CONNECTION',
+      useFactory: (): Promise<typeof mongoose> => {
+        const databaseUrl = `mongodb://${username}:${password}@${host}:${port}/${database}`;
+        return mongoose.connect(databaseUrl);
+      },
     },
-  },
-];
+  ];
+};
