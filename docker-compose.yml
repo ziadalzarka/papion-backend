@@ -6,10 +6,6 @@ services:
     build: .
     environment:
       - NODE_ENV=production
-    ports:
-      - "4000:4000"
-volumes:
-  data-volume:
 networks:
   default:
     external:

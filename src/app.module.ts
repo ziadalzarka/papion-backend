@@ -12,6 +12,7 @@ import { UserModule } from '@gray/user-module';
       autoSchemaFile: 'schema.gql',
       debug: false,
       playground: true,
+      path: '/',
       // expose the schema and docs for the developers
       introspection: true,
       context: ({ req }) => ({ req }),
