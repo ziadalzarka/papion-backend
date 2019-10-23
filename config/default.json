@@ -2,10 +2,11 @@
   "$schema": "../src/config/config.schema.json",
   "metadata": {
     "domain": "localhost",
+    "port": 4000,
     "cookieMaxAge": 604800
   },
   "database": {
-    "host": "167.71.40.160",
+    "host": "198.199.91.193",
     "port": 27017,
     "database": "papion",
     "username": "papion",

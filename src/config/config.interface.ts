@@ -1,5 +1,6 @@
 export interface ApplicationMetadata {
   domain?: string;
+  port?: number;
   cookieMaxAge?: number;
 }
 

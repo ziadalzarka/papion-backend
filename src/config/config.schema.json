@@ -26,6 +26,9 @@
               "domain": {
                   "type": "string"
               },
+              "port": {
+                  "type": "number"
+              },
               "cookieMaxAge": {
                   "type": "number"
               }
