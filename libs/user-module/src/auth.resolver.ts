@@ -1,11 +1,9 @@
 import { UserService } from './user.service';
-import { ObjectID } from 'bson';
 import { Resolver, Query, Args, Context } from '@nestjs/graphql';
-import { UserEntity, ClientUserEntity, BusinessUserEntity, UnionUserEntity } from './user.dto';
+import { UserEntity, UnionUserEntity } from './user.dto';
 import { AuthPayload, LogInPayload } from './auth.dto';
-import { UseGuards, ClassSerializerInterceptor, UseInterceptors, SerializeOptions, Logger } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
-import { UserType } from './user-type.dto';
 import { ResolveUser } from './resolve-user.decorator';
 
 @Resolver('User')

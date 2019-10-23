@@ -1,3 +1,4 @@
+import { UserNotFoundException } from './exceptions/user-not-found.exception';
 import { AuthTokenService } from './auth-token.service';
 import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
@@ -34,6 +35,9 @@ export class UserService {
 
   async logInUser(email: string, password: string) {
     const entity = await this.userModel.findOne({ email });
+    if (!entity) {
+      throw new UserNotFoundException();
+    }
     // compare to hashed password
     const hash = entity.password;
     const valid = bcrypt.compareSync(password, hash);
