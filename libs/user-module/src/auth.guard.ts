@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
         return true;
       }
     } else {
-      return false;
+      throw new UnauthorizedException();
     }
   }
 }

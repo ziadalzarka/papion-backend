@@ -15,5 +15,6 @@ import { AuthTokenService } from './auth-token.service';
     UserResolver,
     AuthTokenService,
   ],
+  exports: [AuthTokenService, UserService],
 })
 export class UserModule { }

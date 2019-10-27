@@ -88,6 +88,7 @@ input LogInPayload {
 }
 
 type Mutation {
+  createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
   signUpClientUser(payload: CreateClientUserInput!): UserEntity!
   signUpBusinessUser(payload: CreateBusinessUserInput!): UserEntity!
 }
@@ -103,4 +104,25 @@ enum UserType {
   Admin
   Client
   Business
+}
+
+type WeddingWebsiteData {
+  coupleName: String!
+}
+
+input WeddingWebsiteDataInput {
+  coupleName: String!
+}
+
+type WeddingWebsiteEntity {
+  _id: ID!
+  subdomain: String!
+  data: WeddingWebsiteData!
+  user: UserEntity!
+  href: String!
+}
+
+input WeddingWebsiteInput {
+  subdomain: String!
+  data: WeddingWebsiteDataInput!
 }

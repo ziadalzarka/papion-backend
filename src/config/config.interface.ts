@@ -16,9 +16,14 @@ export interface TokenConfiguration {
   auth?: string;
 }
 
+export interface ReverseProxyConfiguration {
+  secret?: string;
+}
+
 export interface ConfigurationSchema {
   $schema?: string;
   metadata?: ApplicationMetadata;
   database?: DatabaseConfiguration;
   token?: TokenConfiguration;
+  reverseProxy?: ReverseProxyConfiguration;
 }

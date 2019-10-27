@@ -5,6 +5,7 @@ import { AuthPayload, LogInPayload } from './auth.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { ResolveUser } from './resolve-user.decorator';
+import { User } from './user.decorator';
 
 @Resolver('User')
 export class AuthResolver {
@@ -14,8 +15,8 @@ export class AuthResolver {
   @Query(returns => UserEntity)
   @UseGuards(AuthGuard)
   @ResolveUser()
-  async me(@Context() { req, res }) {
-    return UnionUserEntity(req.user);
+  async me(@User() user) {
+    return UnionUserEntity(user);
   }
 
   @Query(returns => AuthPayload)

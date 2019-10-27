@@ -1,5 +1,5 @@
 import * as config from 'config';
-import { DatabaseConfiguration, ApplicationMetadata, TokenConfiguration } from './config.interface';
+import { DatabaseConfiguration, ApplicationMetadata, TokenConfiguration, ReverseProxyConfiguration } from './config.interface';
 
 export class ConfigUtils {
 
@@ -13,5 +13,9 @@ export class ConfigUtils {
 
   static get token(): TokenConfiguration {
     return config.get('token');
+  }
+
+  static get reverseProxy(): ReverseProxyConfiguration {
+    return config.get('reverseProxy');
   }
 }
