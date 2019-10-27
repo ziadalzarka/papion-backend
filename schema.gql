@@ -118,7 +118,7 @@ type WeddingWebsiteEntity {
   _id: ID!
   subdomain: String!
   data: WeddingWebsiteData!
-  user: UserEntity!
+  user: ClientUserEntity!
   href: String!
 }
 

@@ -1,6 +1,6 @@
 import { ObjectType, Field, InputType } from 'type-graphql';
 import { DatabaseEntity } from '@gray/mongoose-database';
-import { UserEntityType, UserEntity } from '@gray/user-module/user.dto';
+import { UserEntityType, UserEntity, ClientUserEntity } from '@gray/user-module/user.dto';
 
 @ObjectType()
 export class WeddingWebsiteData {
@@ -14,8 +14,8 @@ export class WeddingWebsiteEntity extends DatabaseEntity {
   subdomain: string;
   @Field(type => WeddingWebsiteData)
   data: WeddingWebsiteData;
-  @Field(type => UserEntity)
-  user: UserEntityType;
+  @Field(type => ClientUserEntity)
+  user: ClientUserEntity;
   @Field()
   href: string;
 }

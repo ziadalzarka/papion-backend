@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { WeddingWebsiteModule } from './wedding-website/wedding-website.module';
 import { MongooseDatabaseModule } from '@gray/mongoose-database';
 import { UserModule } from '@gray/user-module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UserModule } from '@gray/user-module';
     }),
     UserModule,
     WeddingWebsiteModule,
+    ServicesModule,
   ],
 })
 export class AppModule { }

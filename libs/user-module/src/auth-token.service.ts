@@ -2,8 +2,7 @@ import { User } from './user.schema';
 import { ConfigUtils } from 'app/config/config.util';
 import { Injectable, Logger } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { AuthenticationToken } from './token.interface';
-import { AuthenticationScope } from './authentication-scope.dto';
+import { AuthenticationToken, AuthenticationScope } from './token.interface';
 
 @Injectable()
 export class AuthTokenService {

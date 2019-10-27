@@ -5,11 +5,11 @@ import { Model } from 'mongoose';
 import { User } from './user.schema';
 import * as bcrypt from 'bcryptjs';
 import { GraphQLError } from 'graphql';
-import { UnauthorizedError } from 'type-graphql';
 import { UnionUserEntity, UserEntityType } from './user.dto';
-import { AuthenticationScope } from './authentication-scope.dto';
+import { AuthenticationScope } from './token.interface';
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
 import { ObjectID } from 'mongodb';
+import { UserType } from './user-type.dto';
 
 @Injectable()
 export class UserService {
@@ -33,6 +33,14 @@ export class UserService {
     return UnionUserEntity(entity);
   }
 
+  private entityToAuthenticationScopes(entity: User) {
+    if (entity.userType === UserType.Business) {
+      return [AuthenticationScope.RegisterPersonBusiness];
+    } else {
+      return [AuthenticationScope.RegisterPlaceBusiness, AuthenticationScope.WeddingWebsites];
+    }
+  }
+
   async logInUser(email: string, password: string) {
     const entity = await this.userModel.findOne({ email });
     if (!entity) {
@@ -43,7 +51,7 @@ export class UserService {
     const valid = bcrypt.compareSync(password, hash);
     if (valid) {
       // generate token only needs _id and scopes
-      const token = this.authTokenService.generateToken(entity._id.toHexString(), [AuthenticationScope.client]);
+      const token = this.authTokenService.generateToken(entity._id.toHexString(), this.entityToAuthenticationScopes(entity));
       return { token, user: UnionUserEntity(entity) };
     } else {
       throw new UnauthorizedException();
