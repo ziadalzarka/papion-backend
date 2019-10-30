@@ -82,6 +82,13 @@ type DatabaseEntity {
   _id: ID!
 }
 
+"""File upload scalar type"""
+scalar File
+
+input FileUploadInput {
+  file: File!
+}
+
 input LogInPayload {
   email: String!
   password: String!
@@ -89,7 +96,6 @@ input LogInPayload {
 
 type Mutation {
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
-  uploadFile(file: Upload!): String!
   signUpClientUser(payload: CreateClientUserInput!): UserEntity!
   signUpBusinessUser(payload: CreateBusinessUserInput!): UserEntity!
 }
@@ -98,9 +104,6 @@ type Query {
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 union UserEntity = BusinessUserEntity | ClientUserEntity
 
@@ -112,13 +115,13 @@ enum UserType {
 
 type WeddingWebsiteData {
   coupleName: String!
-  image: Upload!
+  image: File!
   description: String!
 }
 
 input WeddingWebsiteDataInput {
   coupleName: String!
-  image: Upload!
+  image: File!
   description: String!
 }
 

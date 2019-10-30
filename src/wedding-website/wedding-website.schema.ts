@@ -1,3 +1,4 @@
+import { ObjectID } from 'bson';
 import { schema, field, buildSchema, unique } from 'mongoose-schema-decorators';
 import * as mongoose from 'mongoose';
 import { WeddingWebsiteData, WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
@@ -11,7 +12,7 @@ export class IWeddingWebsite {
   @field
   data: WeddingWebsiteData;
   @field({ ref: 'User' })
-  user: User;
+  user: User | ObjectID;
 }
 
 export const WeddingWebsiteSchema = buildSchema(IWeddingWebsite);

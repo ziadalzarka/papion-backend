@@ -17,6 +17,7 @@ mongoose.set('useUnifiedTopology', true);
 @Module({
   imports: [
     MongooseModule.forRoot(ConfigUtils.databaseUrl),
+    GraphqlEssentialsModule,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       debug: false,

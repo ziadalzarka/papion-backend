@@ -6,15 +6,13 @@ import { WeddingWebsiteResolver } from './wedding-website.resolver';
 import { UserModule } from '@gray/user-module';
 import { UploadsModule, UploadDriver } from '@gray/uploads';
 import { ConfigUtils } from 'app/config/config.util';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Module({
   imports: [
     UserModule,
     MongooseModule.forFeature([{ name: 'WeddingWebsite', schema: WeddingWebsiteSchema }]),
-    UploadsModule.forRoot({
-      driver: UploadDriver.S3,
-      s3: ConfigUtils.s3,
-    }),
+    SharedModule,
   ],
   providers: [WeddingWebsiteService, WeddingWebsiteResolver],
   controllers: [],

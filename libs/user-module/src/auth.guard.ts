@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
   ): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
+    const args = ctx.getArgs();
     if (req.headers.authorization) {
       const token = req.headers.authorization.slice('Bearer '.length);
       const decoded = this.authTokenService.validate(token);
@@ -37,7 +38,6 @@ export class AuthGuard implements CanActivate {
         const handlerScopes = this.getHanldlerScopes(context);
         const scopes = decoded.scopes;
         const matchesScopes = handlerScopes.every(scope => scopes.includes(scope));
-        Logger.debug({ handlerScopes, matchesScopes, scopes });
         if (matchesScopes) {
           return true;
         } else {
