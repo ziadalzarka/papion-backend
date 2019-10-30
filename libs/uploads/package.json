@@ -1,0 +1,13 @@
+{
+  "name": "uploads",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@nestjs/common": "^6.0.0",
+    "@nestjs/core": "^6.0.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.559.0",
+    "mime-types": "^2.1.24",
+    "shortid": "^2.2.15"
+  }
+}

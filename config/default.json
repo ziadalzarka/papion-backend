@@ -10,12 +10,23 @@
     "port": 27017,
     "database": "papion",
     "username": "papion",
-    "password": "loVeA6irl"
+    "password": "loVeA6irl",
+    "discriminatorKey": "__typename"
+  },
+  "files": {
+    "maximumSize": 4194304
   },
   "token": {
     "auth": "cd1941f655a7a1fc4c0b1a76c434ed819c862f6414ab4564b8e3b9e67f1c5333"
   },
   "reverseProxy": {
     "secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJmIiwidHlwZSI6ImFwcCIsInNjb3BlcyI6WyJjcmVhdGVfZW50cnkiXSwiaWF0IjoxNTcxOTQ3NjEyfQ.JwnMFyfA4ZIo5wtCn4VQHMlcdEJRVCR5LNmUU_qFumo"
+  },
+  "s3": {
+    "accessKeyId": "RU6SGBNF74N3QCHIIQ6M",
+    "secretAccessKey": "x0ShRG1kydqF3jr4f19AwJXMFlo8XBx1U1PgcNRWItM",
+    "endpoint": "https://sfo2.digitaloceanspaces.com",
+    "bucket": "gray-space",
+    "path": "papion"
   }
 }

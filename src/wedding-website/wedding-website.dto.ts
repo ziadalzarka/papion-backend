@@ -1,5 +1,5 @@
 import { ObjectType, Field, InputType } from 'type-graphql';
-import { DatabaseEntity } from '@gray/mongoose-database';
+import { DatabaseEntity } from '@gray/graphql-essentials';
 import { UserEntityType, UserEntity, ClientUserEntity } from '@gray/user-module/user.dto';
 
 @ObjectType()

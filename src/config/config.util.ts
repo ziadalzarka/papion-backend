@@ -1,10 +1,16 @@
 import * as config from 'config';
-import { DatabaseConfiguration, ApplicationMetadata, TokenConfiguration, ReverseProxyConfiguration } from './config.interface';
+import { ApplicationMetadata, TokenConfiguration, ReverseProxyConfiguration, DatabaseConfiguration, FileConfiguration } from './config.interface';
+import { S3Configuration } from '@gray/uploads/s3/s3.interface';
 
 export class ConfigUtils {
 
   static get database(): DatabaseConfiguration {
     return config.get('database');
+  }
+
+  static get databaseUrl(): string {
+    const { username, password, host, port, database } = this.database;
+    return `mongodb://${username}:${password}@${host}:${port}/${database}`;
   }
 
   static get metadata(): ApplicationMetadata {
@@ -15,7 +21,15 @@ export class ConfigUtils {
     return config.get('token');
   }
 
+  static get files(): FileConfiguration {
+    return config.get('files');
+  }
+
   static get reverseProxy(): ReverseProxyConfiguration {
     return config.get('reverseProxy');
+  }
+
+  static get s3(): S3Configuration {
+    return config.get('s3');
   }
 }

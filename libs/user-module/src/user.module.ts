@@ -1,17 +1,18 @@
+import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { AuthResolver } from './auth.resolver';
 import { UserService } from './user.service';
-import { userProviders } from './user.provider';
-import { MongooseDatabaseModule } from '@gray/mongoose-database';
 import { UserResolver } from './user.resolver';
 import { AuthTokenService } from './auth-token.service';
+import { UserSchema } from '.';
 
 @Module({
-  imports: [MongooseDatabaseModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+  ],
   providers: [
     AuthResolver,
     UserService,
-    ...userProviders,
     UserResolver,
     AuthTokenService,
   ],

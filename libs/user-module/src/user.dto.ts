@@ -1,7 +1,7 @@
 import { User } from './user.schema';
 import { BusinessCategory } from './business-category.dto';
 import { Field, Int, ObjectType, ID, InputType, ArgsType, createUnionType } from 'type-graphql';
-import { DatabaseEntity } from '@gray/mongoose-database';
+import { DatabaseEntity } from '@gray/graphql-essentials';
 import { Address, AddressInput } from './address.dto';
 import { UserType } from './user-type.dto';
 

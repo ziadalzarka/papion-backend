@@ -16,6 +16,8 @@ export class IWeddingWebsite {
 
 export const WeddingWebsiteSchema = buildSchema(IWeddingWebsite);
 
+mongoose.model('WeddingWebsite', WeddingWebsiteSchema);
+
 export type WeddingWebsite = IWeddingWebsite & mongoose.Document;
 
 export abstract class IQuery {

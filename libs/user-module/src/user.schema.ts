@@ -27,6 +27,8 @@ export class IUser {
 
 export const UserSchema = buildSchema(IUser);
 
+mongoose.model('User', UserSchema);
+
 export type User = IUser & mongoose.Document;
 
 export abstract class IQuery {

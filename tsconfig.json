@@ -13,12 +13,6 @@
       "app/*": [
         "./src/*"
       ],
-      "@gray/mongoose-database": [
-        "libs/mongoose-database/src"
-      ],
-      "@gray/mongoose-database/*": [
-        "libs/mongoose-database/src/*"
-      ],
       "@gray/app-config": [
         "libs/app-config/src"
       ],
@@ -36,6 +30,12 @@
       ],
       "@gray/user-module/*": [
         "libs/user-module/src/*"
+      ],
+      "@gray/uploads": [
+        "libs/uploads/src"
+      ],
+      "@gray/uploads/*": [
+        "libs/uploads/src/*"
       ]
     }
   },

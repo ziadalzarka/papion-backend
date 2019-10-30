@@ -3,10 +3,6 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "projects": {
-    "mongoose-database": {
-      "root": "libs/mongoose-database",
-      "sourceRoot": "libs/mongoose-database/src"
-    },
     "app-config": {
       "root": "libs/app-config",
       "sourceRoot": "libs/app-config/src"
@@ -18,6 +14,10 @@
     "user-module": {
       "root": "libs/user-module",
       "sourceRoot": "libs/user-module/src"
+    },
+    "uploads": {
+      "root": "libs/uploads",
+      "sourceRoot": "libs/uploads/src"
     }
   }
 }

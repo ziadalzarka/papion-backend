@@ -2,17 +2,18 @@ import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
 import { Resolver, Mutation, Args, ResolveProperty, Parent } from '@nestjs/graphql';
 import { WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
-import { Query, UseGuards, Logger } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { ResolveUser } from '@gray/user-module/resolve-user.decorator';
 import { AuthGuard } from '@gray/user-module/auth.guard';
 import { User } from '@gray/user-module/user.decorator';
 import { AuthenticationScope } from '@gray/user-module/token.interface';
 import { AuthScopes } from '@gray/user-module/scope.decorator';
+import { UploadService } from '@gray/uploads/uploads.service';
 
 @Resolver(of => WeddingWebsiteEntity)
 export class WeddingWebsiteResolver {
 
-  constructor(private weddingWebsiteService: WeddingWebsiteService) { }
+  constructor(private weddingWebsiteService: WeddingWebsiteService, private uploadService: UploadService) { }
 
   @Mutation(returns => WeddingWebsiteEntity)
   @ResolveUser()

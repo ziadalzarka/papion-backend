@@ -4,13 +4,14 @@ import { Injectable, Inject } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigUtils } from 'app/config/config.util';
 import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class WeddingWebsiteService {
 
   private _host = 'https://proxy.papion.love';
 
-  constructor(@Inject('WEDDING_WEBSITE_MODEL') private weddingWebsiteModel: Model<WeddingWebsite>) {
+  constructor(@InjectModel('WeddingWebsite') private weddingWebsiteModel: Model<WeddingWebsite>) {
     this.init();
   }
 

@@ -1,3 +1,5 @@
+import { S3Configuration } from "@gray/uploads/s3/s3.interface";
+
 export interface ApplicationMetadata {
   domain?: string;
   port?: number;
@@ -10,6 +12,11 @@ export interface DatabaseConfiguration {
   port?: number;
   username?: string;
   password?: string;
+  discriminatorKey?: string;
+}
+
+export interface FileConfiguration {
+  maximumSize?: number;
 }
 
 export interface TokenConfiguration {
@@ -26,4 +33,6 @@ export interface ConfigurationSchema {
   database?: DatabaseConfiguration;
   token?: TokenConfiguration;
   reverseProxy?: ReverseProxyConfiguration;
+  files?: FileConfiguration;
+  s3?: S3Configuration;
 }

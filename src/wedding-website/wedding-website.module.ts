@@ -1,13 +1,22 @@
-import { Module } from '@nestjs/common';
+import { WeddingWebsiteSchema } from './wedding-website.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Module, forwardRef } from '@nestjs/common';
 import { WeddingWebsiteService } from './wedding-website.service';
 import { WeddingWebsiteResolver } from './wedding-website.resolver';
-import { MongooseDatabaseModule } from '@gray/mongoose-database';
-import { weddingWebsiteProviders } from './wedding-website.provider';
 import { UserModule } from '@gray/user-module';
+import { UploadsModule, UploadDriver } from '@gray/uploads';
+import { ConfigUtils } from 'app/config/config.util';
 
 @Module({
-  imports: [MongooseDatabaseModule, UserModule],
-  providers: [WeddingWebsiteService, WeddingWebsiteResolver, ...weddingWebsiteProviders],
+  imports: [
+    UserModule,
+    MongooseModule.forFeature([{ name: 'WeddingWebsite', schema: WeddingWebsiteSchema }]),
+    UploadsModule.forRoot({
+      driver: UploadDriver.S3,
+      s3: ConfigUtils.s3,
+    }),
+  ],
+  providers: [WeddingWebsiteService, WeddingWebsiteResolver],
   controllers: [],
 })
 export class WeddingWebsiteModule { }

@@ -19,6 +19,12 @@
               },
               "reverseProxy": {
                   "$ref": "#/definitions/ReverseProxyConfiguration"
+              },
+              "files": {
+                  "$ref": "#/definitions/FileConfiguration"
+              },
+              "s3": {
+                  "$ref": "#/definitions/S3Configuration"
               }
           },
           "additionalProperties": false
@@ -55,6 +61,9 @@
               },
               "password": {
                   "type": "string"
+              },
+              "discriminatorKey": {
+                  "type": "string"
               }
           },
           "additionalProperties": false
@@ -72,6 +81,36 @@
           "type": "object",
           "properties": {
               "secret": {
+                  "type": "string"
+              }
+          },
+          "additionalProperties": false
+      },
+      "FileConfiguration": {
+          "type": "object",
+          "properties": {
+              "maximumSize": {
+                  "type": "number"
+              }
+          },
+          "additionalProperties": false
+      },
+      "S3Configuration": {
+          "type": "object",
+          "properties": {
+              "accessKeyId": {
+                  "type": "string"
+              },
+              "endpoint": {
+                  "type": "string"
+              },
+              "secretAccessKey": {
+                  "type": "string"
+              },
+              "bucket": {
+                  "type": "string"
+              },
+              "path": {
                   "type": "string"
               }
           },

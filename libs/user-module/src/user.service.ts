@@ -10,10 +10,12 @@ import { AuthenticationScope } from './token.interface';
 import { UnauthorizedException } from './exceptions/unauthorized.exception';
 import { ObjectID } from 'mongodb';
 import { UserType } from './user-type.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { BusinessCategory } from './business-category.dto';
 
 @Injectable()
 export class UserService {
-  constructor(@Inject('USER_MODEL') private userModel: Model<User>, private authTokenService: AuthTokenService) { }
+  constructor(@InjectModel('User') private userModel: Model<User>, private authTokenService: AuthTokenService) { }
 
   private async validateEmailAvailable(email: string) {
     const exists = await this.userModel.exists({ email });
@@ -35,9 +37,13 @@ export class UserService {
 
   private entityToAuthenticationScopes(entity: User) {
     if (entity.userType === UserType.Business) {
-      return [AuthenticationScope.RegisterPersonBusiness];
+      if (entity.businessCategory === BusinessCategory.Person) {
+        return [AuthenticationScope.RegisterPersonBusiness];
+      } else {
+        return [AuthenticationScope.RegisterPlaceBusiness];
+      }
     } else {
-      return [AuthenticationScope.RegisterPlaceBusiness, AuthenticationScope.WeddingWebsites];
+      return [AuthenticationScope.WeddingWebsites];
     }
   }
 
