@@ -1,11 +1,16 @@
 import { ObjectType, Field, InputType } from 'type-graphql';
 import { DatabaseEntity } from '@gray/graphql-essentials';
-import { UserEntityType, UserEntity, ClientUserEntity } from '@gray/user-module/user.dto';
+import { ClientUserEntity } from '@gray/user-module/user.dto';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 @ObjectType()
 export class WeddingWebsiteData {
   @Field()
   coupleName: string;
+  @Field(type => GraphQLUpload)
+  image: FileUpload;
+  @Field()
+  description: string;
 }
 
 @ObjectType()
@@ -24,6 +29,10 @@ export class WeddingWebsiteEntity extends DatabaseEntity {
 export class WeddingWebsiteDataInput {
   @Field()
   coupleName: string;
+  @Field(type => GraphQLUpload)
+  image: FileUpload;
+  @Field()
+  description: string;
 }
 
 @InputType()

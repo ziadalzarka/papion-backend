@@ -89,6 +89,7 @@ input LogInPayload {
 
 type Mutation {
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
+  uploadFile(file: Upload!): String!
   signUpClientUser(payload: CreateClientUserInput!): UserEntity!
   signUpBusinessUser(payload: CreateBusinessUserInput!): UserEntity!
 }
@@ -97,6 +98,9 @@ type Query {
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 union UserEntity = BusinessUserEntity | ClientUserEntity
 
@@ -108,10 +112,14 @@ enum UserType {
 
 type WeddingWebsiteData {
   coupleName: String!
+  image: Upload!
+  description: String!
 }
 
 input WeddingWebsiteDataInput {
   coupleName: String!
+  image: Upload!
+  description: String!
 }
 
 type WeddingWebsiteEntity {

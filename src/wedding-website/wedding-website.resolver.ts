@@ -1,3 +1,4 @@
+import { GraphQLUpload } from 'apollo-server-core';
 import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
 import { Resolver, Mutation, Args, ResolveProperty, Parent } from '@nestjs/graphql';
@@ -8,12 +9,11 @@ import { AuthGuard } from '@gray/user-module/auth.guard';
 import { User } from '@gray/user-module/user.decorator';
 import { AuthenticationScope } from '@gray/user-module/token.interface';
 import { AuthScopes } from '@gray/user-module/scope.decorator';
-import { UploadService } from '@gray/uploads/uploads.service';
 
 @Resolver(of => WeddingWebsiteEntity)
 export class WeddingWebsiteResolver {
 
-  constructor(private weddingWebsiteService: WeddingWebsiteService, private uploadService: UploadService) { }
+  constructor(private weddingWebsiteService: WeddingWebsiteService) { }
 
   @Mutation(returns => WeddingWebsiteEntity)
   @ResolveUser()
@@ -32,6 +32,12 @@ export class WeddingWebsiteResolver {
   @ResolveProperty('href', () => String)
   href(@Parent() weddingWebsite: WeddingWebsite) {
     return `${weddingWebsite.subdomain}.papion.love`;
+  }
+
+  @Mutation(returns => String)
+  uploadFile(@Args({ name: 'file', type: () => GraphQLUpload }) thing) {
+    console.log(thing);
+    return 'test';
   }
 
 }

@@ -1,3 +1,4 @@
+import { GraphqlEssentialsModule } from '@gray/graphql-essentials';
 import { ConfigUtils } from 'app/config/config.util';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -5,10 +6,8 @@ import { WeddingWebsiteModule } from './wedding-website/wedding-website.module';
 import { UserModule } from '@gray/user-module';
 import { ServicesModule } from './services/services.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UploadsModule, UploadDriver } from '@gray/uploads';
 import { SharedModule } from './shared/shared.module';
 import * as mongoose from 'mongoose';
-import { Upload } from '@gray/graphql-essentials/upload.scalar';
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -18,7 +17,6 @@ mongoose.set('useUnifiedTopology', true);
 @Module({
   imports: [
     MongooseModule.forRoot(ConfigUtils.databaseUrl),
-    Upload,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       debug: false,
