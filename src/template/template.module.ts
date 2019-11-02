@@ -11,5 +11,6 @@ import { UserModule } from '@gray/user-module';
     MongooseModule.forFeature([{ name: 'Template', schema: TemplateSchema }]),
   ],
   providers: [TemplateService, TemplateResolver],
+  exports: [TemplateService],
 })
 export class TemplateModule { }

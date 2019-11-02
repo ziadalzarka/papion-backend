@@ -19,5 +19,5 @@ mongoose.model('Template', TemplateSchema);
 export type Template = ITemplate & mongoose.Document;
 
 export abstract class IQuery {
-  abstract templates(): TemplateEntity;
+  abstract templates(): TemplateEntity[];
 }

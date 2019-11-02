@@ -100,16 +100,34 @@ type Mutation {
   signUpBusinessUser(payload: CreateBusinessUserInput!): UserEntity!
 }
 
+"""Mongo ObjectID scalar type"""
+scalar ObjectID
+
+type PackageEntity {
+  name: String!
+  priority: PackagePriority!
+  price: Float!
+  description: String!
+}
+
+enum PackagePriority {
+  Gold
+  Silver
+  Bronze
+}
+
 type Query {
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
   templates: [TemplateEntity!]!
+  packages: [PackageEntity!]!
 }
 
 type TemplateEntity {
   _id: ID!
   name: String!
   preview_url: String!
+  stylesheet_url: String!
 }
 
 union UserEntity = BusinessUserEntity | ClientUserEntity
@@ -122,14 +140,14 @@ enum UserType {
 
 type WeddingWebsiteData {
   coupleName: String!
-  image: File!
-  description: String!
+  image: File
+  description: String
 }
 
 input WeddingWebsiteDataInput {
   coupleName: String!
-  image: File!
-  description: String!
+  image: File
+  description: String
 }
 
 type WeddingWebsiteEntity {
@@ -138,9 +156,11 @@ type WeddingWebsiteEntity {
   data: WeddingWebsiteData!
   user: ClientUserEntity!
   href: String!
+  template: TemplateEntity!
 }
 
 input WeddingWebsiteInput {
   subdomain: String!
   data: WeddingWebsiteDataInput!
+  templateId: ObjectID!
 }
