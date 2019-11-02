@@ -23,11 +23,11 @@ export class S3Service {
     this._client = new S3({ accessKeyId, secretAccessKey, endpoint });
   }
 
-  async uploadFile(file: FileUpload): Promise<string> {
+  async uploadFile(file: FileUpload, directory?: string): Promise<string> {
     if (!this.config) {
       Logger.error('Configure S3 first before using it!');
     }
-    const filename = this.generateFilename(file);
+    const filename = this.generateFilename(file, directory);
     const stream = file.createReadStream();
     await this.putFile(filename, stream);
     return this.generateDownloadURL(filename);
@@ -42,10 +42,10 @@ export class S3Service {
     }).promise();
   }
 
-  private generateFilename(file: FileUpload) {
+  private generateFilename(file: FileUpload, directory?: string) {
     const parsedPath = path.parse(file.filename);
     const extension = mime.extension(file.mimetype);
-    return `${parsedPath.name}.${extension}`;
+    return `${directory ? directory + '/' : ''}${parsedPath.name}.${extension}`;
   }
 
   private generateDownloadURL(filename: string) {

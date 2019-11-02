@@ -103,6 +103,13 @@ type Mutation {
 type Query {
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
+  templates: [TemplateEntity!]!
+}
+
+type TemplateEntity {
+  _id: ID!
+  name: String!
+  preview_url: String!
 }
 
 union UserEntity = BusinessUserEntity | ClientUserEntity

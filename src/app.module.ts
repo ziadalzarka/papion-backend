@@ -7,6 +7,8 @@ import { UserModule } from '@gray/user-module';
 import { ServicesModule } from './services/services.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from './shared/shared.module';
+import { TemplateModule } from './template/template.module';
+import { PackageModule } from './package/package.module';
 import * as mongoose from 'mongoose';
 
 mongoose.set('useNewUrlParser', true);
@@ -36,6 +38,8 @@ mongoose.set('useUnifiedTopology', true);
     WeddingWebsiteModule,
     ServicesModule,
     SharedModule,
+    TemplateModule,
+    PackageModule,
   ],
 })
 export class AppModule { }
