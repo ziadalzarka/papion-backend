@@ -1,8 +1,8 @@
 import { ObjectID } from 'mongodb';
-import { ProcessGraphQLUploadArgs } from './../../libs/graphql-essentials/src/nest-await';
+import { ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
 import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
-import { Resolver, Mutation, Args, ResolveProperty, Parent, Info } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, ResolveProperty, Parent, Info, Query } from '@nestjs/graphql';
 import { WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
 import { UseGuards, UseInterceptors, Logger } from '@nestjs/common';
 import { ResolveUser } from '@gray/user-module/resolve-user.decorator';
@@ -17,6 +17,7 @@ import { UserEntity, UnionUserEntity } from '@gray/user-module/user.dto';
 import { GraphQLResolveInfo } from 'graphql';
 import { TemplateService } from 'app/template/template.service';
 import { TemplateEntity } from 'app/template/template.dto';
+import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-website-does-not-exist.exception';
 
 @InputType()
 class FileUploadInput {
@@ -63,7 +64,16 @@ export class WeddingWebsiteResolver {
 
   @ResolveProperty('href', type => String)
   href(@Parent() weddingWebsite: WeddingWebsite) {
-    return `${weddingWebsite.subdomain}.papion.love`;
+    return `http://${weddingWebsite.subdomain}.papion.love`;
+  }
+
+  @Query(returns => WeddingWebsiteEntity)
+  async weddingWebsite(@Args({ name: 'subdomain', type: () => String }) subdomain: string) {
+    const doc = await this.weddingWebsiteService.findBySubdomain(subdomain);
+    if (!doc) {
+      throw new WeddingWebsiteDoesNotExistException();
+    }
+    return doc;
   }
 
 }

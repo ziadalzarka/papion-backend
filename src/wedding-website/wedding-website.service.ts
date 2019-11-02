@@ -1,3 +1,4 @@
+import { ObjectID } from 'mongodb';
 import { WeddingWebsiteExistsException } from './exceptions/wedding-website-exists.exception';
 import { WeddingWebsite } from './wedding-website.schema';
 import { Injectable, Inject } from '@nestjs/common';
@@ -44,6 +45,10 @@ export class WeddingWebsiteService {
 
   async createWeddingWebsite(payload: Partial<WeddingWebsite>) {
     return await new this.weddingWebsiteModel(payload).save();
+  }
+
+  findBySubdomain(subdomain: string) {
+    return this.weddingWebsiteModel.findOne({ subdomain });
   }
 
 }

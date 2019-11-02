@@ -1,5 +1,5 @@
 import { ObjectID } from 'bson';
-import { schema, field, buildSchema, unique } from 'mongoose-schema-decorators';
+import { schema, field, buildSchema, unique, indexed } from 'mongoose-schema-decorators';
 import * as mongoose from 'mongoose';
 import { WeddingWebsiteData, WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
 import { User } from '@gray/user-module/user.schema';
@@ -9,6 +9,7 @@ import { Template } from 'app/template/template.schema';
 export class IWeddingWebsite {
   @field
   @unique
+  @indexed
   subdomain: string;
   @field
   data: WeddingWebsiteData;

@@ -117,6 +117,7 @@ enum PackagePriority {
 }
 
 type Query {
+  weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
   templates: [TemplateEntity!]!
