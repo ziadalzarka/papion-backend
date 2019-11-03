@@ -4,10 +4,12 @@ import * as mongoose from 'mongoose';
 import { Address } from './address.dto';
 import { AuthPayload } from './auth.dto';
 import { UserType } from './user-type.dto';
-import { UserEntity, CreateBusinessUserInput, CreateClientUserInput, UserEntityType } from './user.dto';
+import { UserEntity, CreateBusinessUserInput, CreateClientUserInput } from './user.dto';
+import { ObjectID } from 'mongodb';
 
 @schema({})
 export class IUser {
+  readonly _id: ObjectID;
   @field
   name: string;
   @unique
@@ -34,6 +36,6 @@ export type User = IUser & mongoose.Document;
 export abstract class IQuery {
   abstract me(): User | Promise<User>;
   abstract logIn(email: string, password: string): AuthPayload | Promise<AuthPayload>;
-  abstract signUpClientUser(payload: CreateClientUserInput): UserEntityType | Promise<UserEntityType>;
-  abstract signUpBusinessUser(payload: CreateBusinessUserInput): UserEntityType | Promise<UserEntityType>;
+  abstract signUpClientUser(payload: CreateClientUserInput): typeof UserEntity | Promise<typeof UserEntity>;
+  abstract signUpBusinessUser(payload: CreateBusinessUserInput): typeof UserEntity | Promise<typeof UserEntity>;
 }

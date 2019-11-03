@@ -3,7 +3,8 @@
   "metadata": {
     "domain": "localhost",
     "port": 4000,
-    "cookieMaxAge": 604800
+    "cookieMaxAge": 604800,
+    "pageSize": 10
   },
   "database": {
     "host": "198.199.91.193",

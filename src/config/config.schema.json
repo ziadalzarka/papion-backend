@@ -40,6 +40,9 @@
               },
               "cookieMaxAge": {
                   "type": "number"
+              },
+              "pageSize": {
+                  "type": "number"
               }
           },
           "additionalProperties": false

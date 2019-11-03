@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { PackageService } from './package.service';
 import { PackageResolver } from './package.resolver';
 import { PackageSchema } from './package.schema';
-import { UserModule } from '@gray/user-module';
+import { UserModule } from 'app/user';
 
 @Module({
   imports: [

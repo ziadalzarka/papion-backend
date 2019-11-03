@@ -1,23 +1,21 @@
+import { File, ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
+import { TemplateEntity } from 'app/template/template.dto';
+import { TemplateService } from 'app/template/template.service';
+import { AuthGuard } from 'app/user/auth.guard';
+import { ResolveUser } from 'app/user/resolve-user.decorator';
+import { AuthScopes } from 'app/user/scope.decorator';
+import { AuthenticationScope } from 'app/user/token.interface';
+import { User } from 'app/user/user.decorator';
+import { UserEntity } from 'app/user/user.dto';
+import { UserService } from 'app/user/user.service';
 import { ObjectID } from 'mongodb';
-import { ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
+import { Field, InputType } from 'type-graphql';
+import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-website-does-not-exist.exception';
+import { WeddingWebsiteEntity, WeddingWebsiteInput } from './wedding-website.dto';
 import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
-import { Resolver, Mutation, Args, ResolveProperty, Parent, Info, Query } from '@nestjs/graphql';
-import { WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
-import { UseGuards, UseInterceptors, Logger } from '@nestjs/common';
-import { ResolveUser } from '@gray/user-module/resolve-user.decorator';
-import { AuthGuard } from '@gray/user-module/auth.guard';
-import { User } from '@gray/user-module/user.decorator';
-import { AuthenticationScope } from '@gray/user-module/token.interface';
-import { AuthScopes } from '@gray/user-module/scope.decorator';
-import { File } from '@gray/graphql-essentials';
-import { InputType, Field } from 'type-graphql';
-import { UserService } from '@gray/user-module/user.service';
-import { UserEntity, UnionUserEntity } from '@gray/user-module/user.dto';
-import { GraphQLResolveInfo } from 'graphql';
-import { TemplateService } from 'app/template/template.service';
-import { TemplateEntity } from 'app/template/template.dto';
-import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-website-does-not-exist.exception';
 
 @InputType()
 class FileUploadInput {
@@ -39,7 +37,7 @@ export class WeddingWebsiteResolver {
   @UseGuards(AuthGuard)
   async createWeddingWebsite(
     @User() user,
-    @Args({ type: () => WeddingWebsiteInput, name: 'payload' }) args: WeddingWebsiteInput, @Info() info: GraphQLResolveInfo) {
+    @Args({ type: () => WeddingWebsiteInput, name: 'payload' }) args: WeddingWebsiteInput) {
     const payload = await ProcessGraphQLUploadArgs<WeddingWebsiteInput>(args);
     await this.templateService.validateTemplateUsable(payload.templateId);
     await this.weddingWebsiteService.validateWeddingWebsiteAvailable(payload.subdomain);
@@ -53,8 +51,7 @@ export class WeddingWebsiteResolver {
 
   @ResolveProperty('user', type => UserEntity)
   async user(@Parent() weddingWebsite: WeddingWebsite) {
-    const doc = await this.userService._resolveUser(weddingWebsite.user as ObjectID);
-    return UnionUserEntity(doc);
+    return await this.userService._resolveUser(weddingWebsite.user as ObjectID);
   }
 
   @ResolveProperty('template', type => TemplateEntity)

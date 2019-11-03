@@ -1,9 +1,10 @@
-import { S3Configuration } from "@gray/uploads/s3/s3.interface";
+import { S3Configuration } from '@gray/uploads/s3/s3.interface';
 
 export interface ApplicationMetadata {
   domain?: string;
   port?: number;
   cookieMaxAge?: number;
+  pageSize?: number;
 }
 
 export interface DatabaseConfiguration {

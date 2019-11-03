@@ -1,6 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { PackageEntity } from './package.dto';
-import { AuthGuard } from '@gray/user-module/auth.guard';
+import { AuthGuard } from 'app/user/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { PackageService } from './package.service';
 

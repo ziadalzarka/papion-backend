@@ -3,8 +3,8 @@ import { ConfigUtils } from 'app/config/config.util';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { WeddingWebsiteModule } from './wedding-website/wedding-website.module';
-import { UserModule } from '@gray/user-module';
-import { ServicesModule } from './services/services.module';
+import { UserModule } from 'app/user';
+import { ServiceModule } from 'app/service/service.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from './shared/shared.module';
 import { TemplateModule } from './template/template.module';
@@ -36,7 +36,7 @@ mongoose.set('useUnifiedTopology', true);
     }),
     UserModule,
     WeddingWebsiteModule,
-    ServicesModule,
+    ServiceModule,
     SharedModule,
     TemplateModule,
     PackageModule,

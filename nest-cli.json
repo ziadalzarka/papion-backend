@@ -11,10 +11,6 @@
       "root": "libs/graphql-essentials",
       "sourceRoot": "libs/graphql-essentials/src"
     },
-    "user-module": {
-      "root": "libs/user-module",
-      "sourceRoot": "libs/user-module/src"
-    },
     "uploads": {
       "root": "libs/uploads",
       "sourceRoot": "libs/uploads/src"

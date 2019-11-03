@@ -1,6 +1,6 @@
 export enum AuthenticationScope {
   WeddingWebsites = 'wedding_websites',
-  RegisterPlaceBusiness = 'register_person_business',
+  RegisterPlaceBusiness = 'register_place_business',
   RegisterPersonBusiness = 'register_person_business',
 }
 

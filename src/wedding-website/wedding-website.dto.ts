@@ -1,6 +1,6 @@
 import { ObjectType, Field, InputType, ID } from 'type-graphql';
 import { DatabaseEntity } from '@gray/graphql-essentials';
-import { ClientUserEntity } from '@gray/user-module/user.dto';
+import { ClientUserEntity } from 'app/user/user.dto';
 import { File } from '@gray/graphql-essentials';
 import { ObjectID } from 'mongodb';
 import { TemplateEntity } from 'app/template/template.dto';

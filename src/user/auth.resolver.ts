@@ -1,11 +1,11 @@
-import { UserService } from './user.service';
-import { Resolver, Query, Args, Context } from '@nestjs/graphql';
-import { UserEntity, UnionUserEntity } from './user.dto';
-import { AuthPayload, LogInPayload } from './auth.dto';
 import { UseGuards } from '@nestjs/common';
+import { Args, Query, Resolver } from '@nestjs/graphql';
+import { AuthPayload, LogInPayload } from './auth.dto';
 import { AuthGuard } from './auth.guard';
 import { ResolveUser } from './resolve-user.decorator';
 import { User } from './user.decorator';
+import { UserEntity } from './user.dto';
+import { UserService } from './user.service';
 
 @Resolver('User')
 export class AuthResolver {
@@ -16,7 +16,7 @@ export class AuthResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   async me(@User() user) {
-    return UnionUserEntity(user);
+    return user;
   }
 
   @Query(returns => AuthPayload)

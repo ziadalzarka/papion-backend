@@ -25,12 +25,6 @@
       "@gray/graphql-essentials/*": [
         "libs/graphql-essentials/src/*"
       ],
-      "@gray/user-module": [
-        "libs/user-module/src"
-      ],
-      "@gray/user-module/*": [
-        "libs/user-module/src/*"
-      ],
       "@gray/uploads": [
         "libs/uploads/src"
       ],

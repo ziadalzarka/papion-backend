@@ -2,7 +2,7 @@ import { ObjectID } from 'bson';
 import { schema, field, buildSchema, unique, indexed } from 'mongoose-schema-decorators';
 import * as mongoose from 'mongoose';
 import { WeddingWebsiteData, WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
-import { User } from '@gray/user-module/user.schema';
+import { User } from 'app/user/user.schema';
 import { Template } from 'app/template/template.schema';
 
 @schema({})

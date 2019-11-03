@@ -28,20 +28,17 @@ export class BusinessUserEntity extends BaseUserEntity<BusinessUserEntity> {
   businessCategory: BusinessCategory;
 }
 
-export const UnionUserEntity = (entity: User): UserEntityType => {
-  switch (entity.userType) {
-    case UserType.Business:
-      return new BusinessUserEntity(entity);
-    case UserType.Client:
-      return new ClientUserEntity(entity);
-  }
-};
-
-export type UserEntityType = BusinessUserEntity | ClientUserEntity;
-
 export const UserEntity = createUnionType({
   name: 'UserEntity',
   types: [BusinessUserEntity, ClientUserEntity],
+  resolveType: entity => {
+    switch (entity.userType) {
+      case UserType.Business:
+        return 'BusinessUserEntity';
+      case UserType.Client:
+        return 'ClientUserEntity';
+    }
+  },
 });
 
 @InputType()

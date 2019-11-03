@@ -5,9 +5,11 @@ import { UserService } from './user.service';
 import { UserResolver } from './user.resolver';
 import { AuthTokenService } from './auth-token.service';
 import { UserSchema } from '.';
+import { ServiceModule } from 'app/service/service.module';
 
 @Module({
   imports: [
+    ServiceModule,
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
   providers: [

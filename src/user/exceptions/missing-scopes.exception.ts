@@ -1,4 +1,4 @@
-import { AuthenticationScope } from '@gray/user-module/token.interface';
+import { AuthenticationScope } from 'app/user/token.interface';
 import { GraphQLException } from '@gray/graphql-essentials';
 
 export class MissingScopesException extends GraphQLException {

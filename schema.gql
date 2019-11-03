@@ -7,17 +7,36 @@ type Address {
   country: Country!
   city: City!
   street: String
+  coords: Coordinates
+}
+
+input AddressCoordinatesInput {
+  lat: Float!
+  long: Float!
 }
 
 input AddressInput {
   country: Country!
   city: City!
   street: String
+  coords: AddressCoordinatesInput
 }
 
 type AuthPayload {
   token: String!
   user: UserEntity!
+}
+
+type BaseServiceEntity {
+  _id: ID!
+  name: String!
+  user: BusinessUserEntity!
+  businessCategory: BusinessCategory!
+  address: Address!
+  description: String
+  startingPrice: Float
+  rating: Float!
+  published: Boolean!
 }
 
 type BaseUserEntity {
@@ -57,6 +76,11 @@ type ClientUserEntity {
   userType: UserType!
 }
 
+type Coordinates {
+  lat: Float!
+  long: Float!
+}
+
 enum Country {
   Egypt
 }
@@ -78,6 +102,15 @@ input CreateClientUserInput {
   address: AddressInput!
 }
 
+input CreatePlaceServiceInput {
+  name: String!
+  address: AddressInput!
+  description: String
+  startingPrice: Float
+  coverImage: File
+  category: PlaceCategory
+}
+
 type DatabaseEntity {
   _id: ID!
 }
@@ -96,8 +129,15 @@ input LogInPayload {
 
 type Mutation {
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
-  signUpClientUser(payload: CreateClientUserInput!): UserEntity!
-  signUpBusinessUser(payload: CreateBusinessUserInput!): UserEntity!
+  signUpClientUser(payload: CreateClientUserInput!): ClientUserEntity!
+  signUpBusinessUser(payload: CreateBusinessUserInput!): BusinessUserEntity!
+  publishPersonBusiness: PersonServiceEntity!
+  updatePersonBusiness(payload: UpdatePersonServiceInput!): PersonServiceEntity!
+  unpublishPersonBusiness: PersonServiceEntity!
+  publishPlaceBusiness(id: ObjectID!): PlaceServiceEntity!
+  createPlaceBusiness(payload: CreatePlaceServiceInput!): PlaceServiceEntity!
+  updatePlaceBusiness(payload: UpdatePlaceServicePayloadInput!): PlaceServiceEntity!
+  unpublishPlaceBusiness(id: ObjectID!): PlaceServiceEntity!
 }
 
 """Mongo ObjectID scalar type"""
@@ -113,15 +153,89 @@ type PackageEntity {
 enum PackagePriority {
   Gold
   Silver
-  Bronze
+  Free
+}
+
+enum PersonCategory {
+  Photographer
+  WeddingPlanner
+}
+
+type PersonServiceEntity {
+  _id: ID!
+  name: String!
+  user: BusinessUserEntity!
+  businessCategory: BusinessCategory!
+  address: Address!
+  description: String
+  startingPrice: Float
+  rating: Float!
+  published: Boolean!
+  image: String
+  category: PersonCategory
+}
+
+enum PlaceCategory {
+  Hotel
+  OpenAir
+  Hall
+}
+
+type PlaceServiceEntity {
+  _id: ID!
+  name: String!
+  user: BusinessUserEntity!
+  businessCategory: BusinessCategory!
+  address: Address!
+  description: String
+  startingPrice: Float
+  rating: Float!
+  published: Boolean!
+  coverImage: String
+  category: PlaceCategory
+}
+
+input PriceRangeInput {
+  startPrice: Float!
+  endPrice: Float!
 }
 
 type Query {
   weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
+  search(payload: SearchPayloadInput!): [ServiceEntity!]!
+  personBusiness: PersonServiceEntity!
+  placeBusinesss: [PlaceServiceEntity!]!
   templates: [TemplateEntity!]!
   packages: [PackageEntity!]!
+}
+
+input SearchPayloadInput {
+  query: String!
+  category: ServiceCategory!
+  priceRange: PriceRangeInput!
+  packagePriority: [PackagePriority!]!
+  page: Float!
+  orderBy: ServiceSearchOrderBy!
+}
+
+enum ServiceCategory {
+  Hotel
+  OpenAir
+  Hall
+  Photographer
+  WeddingPlanner
+}
+
+union ServiceEntity = PersonServiceEntity | PlaceServiceEntity
+
+enum ServiceSearchOrderBy {
+  Price
+  Rating
+  Time
+  Popularity
+  AddedAt
 }
 
 type TemplateEntity {
@@ -129,6 +243,42 @@ type TemplateEntity {
   name: String!
   preview_url: String!
   stylesheet_url: String!
+}
+
+input UpdateAddressCoordinatesInput {
+  lat: Float
+  long: Float
+}
+
+input UpdateAddressInput {
+  country: Country
+  city: City
+  street: String
+  coords: UpdateAddressCoordinatesInput
+}
+
+input UpdatePersonServiceInput {
+  name: String
+  address: UpdateAddressInput
+  description: String
+  startingPrice: Float
+  image: File
+  category: PersonCategory
+}
+
+input UpdatePlaceServiceInput {
+  name: String
+  address: AddressInput
+  description: String
+  startingPrice: Float
+  rating: Float
+  coverImage: File
+  category: PlaceCategory
+}
+
+input UpdatePlaceServicePayloadInput {
+  id: ObjectID!
+  data: UpdatePlaceServiceInput!
 }
 
 union UserEntity = BusinessUserEntity | ClientUserEntity
