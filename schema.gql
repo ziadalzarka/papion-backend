@@ -216,8 +216,11 @@ input SearchPayloadInput {
   category: ServiceCategory!
   priceRange: PriceRangeInput!
   packagePriority: [PackagePriority!]!
+  country: Country!
+  city: City!
   page: Float!
   orderBy: ServiceSearchOrderBy!
+  sortKey: SortKey!
 }
 
 enum ServiceCategory {
@@ -236,6 +239,11 @@ enum ServiceSearchOrderBy {
   Time
   Popularity
   AddedAt
+}
+
+enum SortKey {
+  Ascending
+  Descending
 }
 
 type TemplateEntity {
