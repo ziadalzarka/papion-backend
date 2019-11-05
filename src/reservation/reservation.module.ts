@@ -13,5 +13,6 @@ import { UserModule } from 'app/user';
     ServiceModule,
   ],
   providers: [ReservationService, ReservationResolver],
+  exports: [MongooseModule],
 })
 export class ReservationModule { }

@@ -1,15 +1,16 @@
-import { ObjectID } from 'mongodb';
-import { schema, field, buildSchema, unique, indexed } from 'mongoose-schema-decorators';
-import * as mongoose from 'mongoose';
-import { User } from 'app/user';
 import { ConfigUtils } from 'app/config/config.util';
-import { Address } from 'app/user/address.dto';
-import { PersonCategory, PlaceCategory } from './category.dto';
-import { BusinessCategory } from 'app/user/business-category.dto';
 import { PackagePriority } from 'app/package/package.interface';
+import { User } from 'app/user';
+import { Address } from 'app/user/address.dto';
+import { BusinessCategory } from 'app/user/business-category.dto';
+import { ObjectID } from 'mongodb';
+import * as mongoose from 'mongoose';
+import { buildSchema, field, indexed, schema } from 'mongoose-schema-decorators';
+import { PersonCategory, PlaceCategory } from './category.dto';
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
 export class IService {
+  _id: ObjectID;
   @indexed
   @field
   name: string;
@@ -63,6 +64,18 @@ export class IPersonService extends IService {
 export const ServiceSchema = buildSchema(IService);
 export const PlaceServiceSchema = buildSchema(IPlaceService);
 export const PersonServiceSchema = buildSchema(IPersonService);
+
+function ensureBusinessCategory(next) {
+  if ((this as any)._fields && Object.keys((this as any)._fields).length > 0) {
+    this.select({ businessCategory: true });
+  }
+  next();
+}
+
+// always include business category because it is needed for type resolving
+ServiceSchema.pre('find', ensureBusinessCategory);
+ServiceSchema.pre('findOne', ensureBusinessCategory);
+ServiceSchema.pre('findOneAndUpdate', ensureBusinessCategory);
 
 ServiceSchema.index(ConfigUtils.database.discriminatorKey);
 ServiceSchema.index({ 'address.city': 1 });

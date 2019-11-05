@@ -1,6 +1,7 @@
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
 import { AuthGuard } from 'app/user/auth.guard';
 import { ReservationService } from './reservation.service';
-import { Resolver, Mutation, Args, Query, ResolveProperty, Parent } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, ResolveProperty, Parent, Info } from '@nestjs/graphql';
 import { ReserveServiceInput, ReservationEntity, ReservationsPage, ReservationStatus } from './reservation.dto';
 import { ServiceService } from 'app/service/service.service';
 import { UseGuards } from '@nestjs/common';
@@ -12,12 +13,12 @@ import { IReservation } from './reservation.schema';
 import { ObjectID } from 'mongodb';
 import { groundDate } from 'app/shared/date.util';
 import { ReservationDayPassedException } from './exceptions/reservation-day-passed.exception';
-
 @Resolver(of => ReservationEntity)
 export class ReservationResolver {
 
   constructor(private reservationService: ReservationService, private serviceService: ServiceService) { }
 
+  // TODO: authentication scopes
   @Mutation(returns => ReservationEntity)
   @UseGuards(AuthGuard)
   @ResolveUser()
@@ -34,6 +35,7 @@ export class ReservationResolver {
     return await this.reservationService.submitRequest({ ...payload, user: user._id });
   }
 
+  // TODO: authentication scopes
   @Query(returns => ReservationsPage)
   @UseGuards(AuthGuard)
   @ResolveUser()
@@ -42,8 +44,8 @@ export class ReservationResolver {
   }
 
   @ResolveProperty('service', type => ServiceEntity)
-  async service(@Parent() reservation: IReservation) {
-    return await this.serviceService._resolveService(reservation.service as ObjectID);
+  async service(@Parent() reservation: IReservation, @Info() info) {
+    return await this.serviceService._resolveService(reservation.service as ObjectID, graphqlMongodbProjection(info));
   }
 
 }

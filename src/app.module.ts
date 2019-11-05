@@ -10,6 +10,7 @@ import { SharedModule } from './shared/shared.module';
 import { TemplateModule } from './template/template.module';
 import { PackageModule } from './package/package.module';
 import { ReservationModule } from './reservation/reservation.module';
+import { BusinessCpanelModule } from './business-cpanel/business-cpanel.module';
 import * as mongoose from 'mongoose';
 
 mongoose.set('useNewUrlParser', true);
@@ -42,6 +43,7 @@ mongoose.set('useUnifiedTopology', true);
     TemplateModule,
     PackageModule,
     ReservationModule,
+    BusinessCpanelModule,
   ],
 })
 export class AppModule { }

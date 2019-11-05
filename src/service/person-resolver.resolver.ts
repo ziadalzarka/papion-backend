@@ -1,5 +1,5 @@
 import { UseGuards, Logger } from '@nestjs/common';
-import { Parent, Query, ResolveProperty, Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Parent, Query, ResolveProperty, Resolver, Mutation, Args, Info } from '@nestjs/graphql';
 import { IUser } from 'app/user';
 import { AuthGuard } from 'app/user/auth.guard';
 import { ResolveUser } from 'app/user/resolve-user.decorator';
@@ -16,6 +16,8 @@ import { validate } from 'class-validator';
 import { RequiredFieldsMissingException } from './exceptions/required-fields-missing.exception';
 import { ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
 import { ServiceNotOwnedException } from './exceptions/service-not-owned.exception';
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
+import { GraphQLResolveInfo } from 'graphql';
 
 @Resolver(of => PersonServiceEntity)
 export class PersonResolverResolver {
@@ -26,13 +28,13 @@ export class PersonResolverResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPersonBusiness])
-  async personBusiness(@User() user: IUser) {
-    return await this.serviceService.getPersonService(user._id);
+  async personBusiness(@User() user: IUser, @Info() info: GraphQLResolveInfo) {
+    return await this.serviceService.getPersonService(user._id, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('user', type => BusinessUserEntity)
-  async user(@Parent() service: IService) {
-    const doc = await this.userService._resolveUser(service.user as ObjectID);
+  async user(@Parent() service: IService, @Info() info: GraphQLResolveInfo) {
+    const doc = await this.userService._resolveUser(service.user as ObjectID, graphqlMongodbProjection(info));
     return new BusinessUserEntity(doc);
   }
 
@@ -40,14 +42,14 @@ export class PersonResolverResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPersonBusiness])
-  async publishPersonBusiness(@User() user: IUser) {
+  async publishPersonBusiness(@User() user: IUser, @Info() info: GraphQLResolveInfo) {
     const person = await this.serviceService.getPersonService(user._id);
     const validationErrors = await validate(person);
     const fields = validationErrors.map(error => error.property);
     if (fields.length > 0) {
       throw new RequiredFieldsMissingException(fields);
     } else {
-      return await this.serviceService.updatePersonService(user._id, { published: true });
+      return await this.serviceService.updatePersonService(user._id, { published: true }, graphqlMongodbProjection(info));
     }
   }
 
@@ -57,16 +59,17 @@ export class PersonResolverResolver {
   @AuthScopes([AuthenticationScope.RegisterPersonBusiness])
   async updatePersonBusiness(
     @User() user: IUser,
-    @Args({ name: 'payload', type: () => UpdatePersonServiceInput }) args: UpdatePersonServiceInput) {
+    @Args({ name: 'payload', type: () => UpdatePersonServiceInput }) args: UpdatePersonServiceInput,
+    @Info() info: GraphQLResolveInfo) {
     const payload = await ProcessGraphQLUploadArgs<UpdatePersonServiceInput>(args);
-    return await this.serviceService.updatePersonService(user._id, payload);
+    return await this.serviceService.updatePersonService(user._id, payload, graphqlMongodbProjection(info));
   }
 
   @Mutation(returns => PersonServiceEntity)
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPersonBusiness])
-  async unpublishPersonBusiness(@User() user: IUser) {
-    return await this.serviceService.updatePersonService(user._id, { published: false });
+  async unpublishPersonBusiness(@User() user: IUser, @Info() info: GraphQLResolveInfo) {
+    return await this.serviceService.updatePersonService(user._id, { published: false }, graphqlMongodbProjection(info));
   }
 }

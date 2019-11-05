@@ -40,7 +40,7 @@ export class ReserveServiceInput {
 @ObjectType()
 export class ReservationsPage implements ResultsPage<typeof ReservationEntity> {
   @Field(type => [ReservationEntity])
-  items: Array<typeof ReservationEntity>;
+  edges: Array<typeof ReservationEntity>;
   @Field()
   hasNext: boolean;
   @Field()

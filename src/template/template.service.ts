@@ -10,7 +10,6 @@ export class TemplateService {
   constructor(@InjectModel('Template') private templateModel: Model<Template>) { }
 
   async validateTemplateUsable(_id: ObjectID) {
-    console.log(_id);
     const exists = await this.templateModel.exists({ _id });
     Logger.debug('It exists');
     if (!exists) {
@@ -18,11 +17,11 @@ export class TemplateService {
     }
   }
 
-  list() {
-    return this.templateModel.find({});
+  list(projection = {}) {
+    return this.templateModel.find({}, projection);
   }
 
-  _resolveTemplate(_id: ObjectID) {
-    return this.templateModel.findById(_id);
+  _resolveTemplate(_id: ObjectID, projection = {}) {
+    return this.templateModel.findById(_id, projection);
   }
 }

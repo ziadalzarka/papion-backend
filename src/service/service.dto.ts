@@ -8,6 +8,7 @@ import { ObjectID } from 'mongodb';
 import { createUnionType, Field, InputType, ObjectType } from 'type-graphql';
 import { PersonCategory, PlaceCategory } from './category.dto';
 import { ResultsPage } from '@gray/graphql-essentials/page.dto';
+import { ReservationEntity, ReservationsPage } from 'app/reservation/reservation.dto';
 
 // Validation decorators are here to validate the required fields internally
 // before publishing but they are not used by NestJS ValidationPipe!
@@ -37,6 +38,8 @@ export class BaseServiceEntity extends DatabaseEntity {
   published: boolean;
   @Field(type => PackagePriority)
   packagePriority: PackagePriority;
+  @Field(type => ReservationsPage)
+  reservations: ReservationsPage;
 }
 
 @ObjectType()

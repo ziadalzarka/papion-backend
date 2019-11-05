@@ -22,7 +22,7 @@ export class ReservationService {
     }
   }
 
-  async listReservations(userId: ObjectID, page) {
-    return await performPaginatableQuery(this.reservationModel, { user: userId }, { status: 1 }, page);
+  async listReservations(userId: ObjectID, page, projection = {}) {
+    return await performPaginatableQuery(this.reservationModel, { user: userId }, { _id: -1 }, page, projection);
   }
 }

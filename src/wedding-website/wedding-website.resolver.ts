@@ -1,6 +1,7 @@
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
 import { File, ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveProperty, Resolver, Info } from '@nestjs/graphql';
 import { TemplateEntity } from 'app/template/template.dto';
 import { TemplateService } from 'app/template/template.service';
 import { AuthGuard } from 'app/user/auth.guard';
@@ -50,13 +51,13 @@ export class WeddingWebsiteResolver {
   }
 
   @ResolveProperty('user', type => UserEntity)
-  async user(@Parent() weddingWebsite: WeddingWebsite) {
-    return await this.userService._resolveUser(weddingWebsite.user as ObjectID);
+  async user(@Parent() weddingWebsite: WeddingWebsite, @Info() info) {
+    return await this.userService._resolveUser(weddingWebsite.user as ObjectID, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('template', type => TemplateEntity)
-  async template(@Parent() weddingWebsite: WeddingWebsite) {
-    return this.templateService._resolveTemplate(weddingWebsite.template as ObjectID);
+  async template(@Parent() weddingWebsite: WeddingWebsite, @Info() info) {
+    return this.templateService._resolveTemplate(weddingWebsite.template as ObjectID, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('href', type => String)
@@ -65,8 +66,8 @@ export class WeddingWebsiteResolver {
   }
 
   @Query(returns => WeddingWebsiteEntity)
-  async weddingWebsite(@Args({ name: 'subdomain', type: () => String }) subdomain: string) {
-    const doc = await this.weddingWebsiteService.findBySubdomain(subdomain);
+  async weddingWebsite(@Args({ name: 'subdomain', type: () => String }) subdomain: string, @Info() info) {
+    const doc = await this.weddingWebsiteService.findBySubdomain(subdomain, graphqlMongodbProjection(info));
     if (!doc) {
       throw new WeddingWebsiteDoesNotExistException();
     }

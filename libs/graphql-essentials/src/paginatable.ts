@@ -1,7 +1,7 @@
 import { ConfigUtils } from 'app/config/config.util';
 
-const performPaginatableFind = async (model, query, sort, page = 1) => {
-  return await model.find(query)
+const performPaginatableFind = async (model, query, sort, page = 1, projection = {}) => {
+  return await model.find(query, projection)
     .skip((page - 1) * ConfigUtils.metadata.pageSize)
     .limit(ConfigUtils.metadata.pageSize)
     .sort(sort)
@@ -15,8 +15,8 @@ const countPages = async (model, query) => {
   return floored === division ? floored : floored + 1;
 };
 
-export const performPaginatableQuery = async (model, query, sort, page) => {
-  const items = await performPaginatableFind(model, query, sort, page);
+export const performPaginatableQuery = async (model, query, sort, page, projection = {}) => {
+  const edges = await performPaginatableFind(model, query, sort, page, projection);
   const pages = await countPages(model, query);
-  return { items, pages, hasNext: pages > page };
+  return { edges, pages, hasNext: pages > page };
 };

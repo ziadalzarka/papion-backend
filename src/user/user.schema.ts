@@ -1,11 +1,9 @@
-import { BusinessCategory } from './business-category.dto';
-import { schema, field, buildSchema, unique } from 'mongoose-schema-decorators';
-import * as mongoose from 'mongoose';
-import { Address } from './address.dto';
-import { AuthPayload } from './auth.dto';
-import { UserType } from './user-type.dto';
-import { UserEntity, CreateBusinessUserInput, CreateClientUserInput } from './user.dto';
 import { ObjectID } from 'mongodb';
+import * as mongoose from 'mongoose';
+import { buildSchema, field, schema, unique } from 'mongoose-schema-decorators';
+import { Address } from './address.dto';
+import { BusinessCategory } from './business-category.dto';
+import { UserType } from './user-type.dto';
 
 @schema({})
 export class IUser {

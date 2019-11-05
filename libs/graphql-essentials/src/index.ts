@@ -3,3 +3,4 @@ export * from './graphql.exception';
 export * from './database.dto';
 export * from './file.scalar';
 export * from './nest-await';
+export { graphqlMongodbProjection } from './projection.util';

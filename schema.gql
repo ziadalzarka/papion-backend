@@ -39,6 +39,7 @@ type BaseServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  reservations: ReservationsPage!
 }
 
 type BaseUserEntity {
@@ -189,6 +190,7 @@ type PersonServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  reservations(page: Float!): ReservationsPage!
   image: String
   category: PersonCategory
 }
@@ -211,6 +213,7 @@ type PlaceServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  reservations: ReservationsPage!
   coverImage: String
   category: PlaceCategory
 }
@@ -242,7 +245,7 @@ type ReservationEntity {
 }
 
 type ReservationsPage {
-  items: [ReservationEntity!]!
+  edges: [ReservationEntity!]!
   hasNext: Boolean!
   pages: Float!
 }
@@ -299,7 +302,7 @@ enum ServiceSearchOrderBy {
 
 type ServiceSearchOutput {
   key: String
-  items: [ServiceEntity!]!
+  edges: [ServiceEntity!]!
   hasNext: Boolean!
   pages: Float!
 }

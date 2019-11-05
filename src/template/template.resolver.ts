@@ -1,4 +1,5 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
+import { Resolver, Query, Info } from '@nestjs/graphql';
 import { TemplateService } from './template.service';
 import { TemplateEntity } from './template.dto';
 import { UseGuards } from '@nestjs/common';
@@ -10,7 +11,7 @@ export class TemplateResolver {
 
   @Query(returns => [TemplateEntity])
   @UseGuards(AuthGuard)
-  templates() {
-    return this.templateService.list();
+  templates(@Info() info) {
+    return this.templateService.list(graphqlMongodbProjection(info));
   }
 }

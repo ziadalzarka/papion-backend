@@ -7,7 +7,7 @@ import { User } from './user.decorator';
 import { UserEntity } from './user.dto';
 import { UserService } from './user.service';
 
-@Resolver('User')
+@Resolver()
 export class AuthResolver {
 
   constructor(private userService: UserService) { }

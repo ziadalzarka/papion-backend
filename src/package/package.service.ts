@@ -8,8 +8,8 @@ export class PackageService {
 
   constructor(@InjectModel('Package') private packageModel: Model<Package>) { }
 
-  list() {
-    return this.packageModel.find({});
+  list(projection = {}) {
+    return this.packageModel.find({}, projection);
   }
 
 }

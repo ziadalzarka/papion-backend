@@ -47,8 +47,8 @@ export class WeddingWebsiteService {
     return await new this.weddingWebsiteModel(payload).save();
   }
 
-  findBySubdomain(subdomain: string) {
-    return this.weddingWebsiteModel.findOne({ subdomain });
+  findBySubdomain(subdomain: string, projection = {}) {
+    return this.weddingWebsiteModel.findOne({ subdomain }, projection);
   }
 
 }

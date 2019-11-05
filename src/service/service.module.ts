@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { PlaceServiceSchema, ServiceSchema, PersonServiceSchema } from 'app/service/service.schema';
 import { ServiceService } from 'app/service/service.service';
-import { ServiceResolver } from './service.resolver';
+import { ServiceSearchResolver } from 'app/service/service-search.resolver';
 import { UserModule } from 'app/user';
 import { PersonResolverResolver } from 'app/service/person-resolver.resolver';
 import { PlaceResolverResolver } from 'app/service/place-resolver.resolver';
@@ -24,7 +24,7 @@ import { PlaceResolverResolver } from 'app/service/place-resolver.resolver';
       useFactory: (model) => model.discriminator('PersonService', PersonServiceSchema),
       inject: [getModelToken('Service')],
     },
-    ServiceResolver,
+    ServiceSearchResolver,
     PersonResolverResolver,
     PlaceResolverResolver,
   ],

@@ -63,7 +63,7 @@ export class UserService {
     }
   }
 
-  async _resolveUser(_id: string | ObjectID) {
-    return await this.userModel.findById(_id);
+  async _resolveUser(_id: string | ObjectID, projection = {}) {
+    return await this.userModel.findById(_id, projection);
   }
 }

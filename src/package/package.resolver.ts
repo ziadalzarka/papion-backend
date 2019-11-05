@@ -1,4 +1,5 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
+import { Resolver, Query, Info } from '@nestjs/graphql';
 import { PackageEntity } from './package.dto';
 import { AuthGuard } from 'app/user/auth.guard';
 import { UseGuards } from '@nestjs/common';
@@ -11,8 +12,8 @@ export class PackageResolver {
 
   @Query(returns => [PackageEntity])
   @UseGuards(AuthGuard)
-  packages() {
-    return this.packageService.list();
+  packages(@Info() info) {
+    return this.packageService.list(graphqlMongodbProjection(info));
   }
 
 }

@@ -28,22 +28,31 @@ export class ServiceService {
     }
   }
 
-  async _resolveService(id: ObjectID) {
-    return await this.serviceModel.findById(id);
+  async _resolveService(id: ObjectID, projection = {}) {
+    return await this.serviceModel.findById(id, projection);
   }
 
-  async updatePersonService(userId: ObjectID, payload: Partial<IPersonService>) {
-    const doc = await this.personServiceModel.findOneAndUpdate({ user: userId }, payload, { new: true, upsert: true, setDefaultsOnInsert: true });
+  async _resolvePersonService(userId: ObjectID) {
+    return await this.personServiceModel.findOne({ user: userId });
+  }
+
+  async updatePersonService(userId: ObjectID, payload: Partial<IPersonService>, projection = {}) {
+    const doc = await this.personServiceModel.findOneAndUpdate({ user: userId }, payload, {
+      new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
+      select: projection,
+    });
     return new PersonServiceEntity(doc);
   }
 
-  async getPersonService(userId: ObjectID) {
-    const doc = await this.personServiceModel.findOne({ user: userId });
+  async getPersonService(userId: ObjectID, projection = {}) {
+    const doc = await this.personServiceModel.findOne({ user: userId }, projection);
     return new PersonServiceEntity(doc);
   }
 
-  async listPlaceServices(userId: ObjectID) {
-    const docs = await this.placeServiceModel.find({ user: userId });
+  async listPlaceServices(userId: ObjectID, projection = {}) {
+    const docs = await this.placeServiceModel.find({ user: userId }, projection);
     return docs.map(doc => new PlaceServiceEntity(doc));
   }
 
@@ -52,8 +61,8 @@ export class ServiceService {
     return new PlaceServiceEntity(doc);
   }
 
-  async updatePlaceService(_id: ObjectID, payload: Partial<IPlaceService>) {
-    const doc = await this.placeServiceModel.findByIdAndUpdate(_id, payload, { new: true });
+  async updatePlaceService(_id: ObjectID, payload: Partial<IPlaceService>, projection = {}) {
+    const doc = await this.placeServiceModel.findByIdAndUpdate(_id, payload, { new: true, select: projection });
     return new PlaceServiceEntity(doc);
   }
 
@@ -91,10 +100,10 @@ export class ServiceService {
     }
   }
 
-  async searchServices(payload: SearchPayloadInput): Promise<ResultsPage> {
+  async searchServices(payload: SearchPayloadInput, projection = {}): Promise<ResultsPage> {
     const query = this.generateSearhQuery(payload);
     const sort = this.generateSortPayload(payload.orderBy, payload.sortKey);
-    return await performPaginatableQuery(this.serviceModel, query, sort, payload.page);
+    return await performPaginatableQuery(this.serviceModel, query, sort, payload.page, projection);
   }
 
 }

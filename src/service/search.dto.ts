@@ -61,7 +61,7 @@ export class ServiceSearchOutput implements ResultsPage<typeof ServiceEntity> {
   @Field({ nullable: true })
   key?: string;
   @Field(type => [ServiceEntity])
-  items: Array<typeof ServiceEntity>;
+  edges: Array<typeof ServiceEntity>;
   @Field()
   hasNext: boolean;
   @Field()

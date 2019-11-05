@@ -1,5 +1,5 @@
 import { Logger, UseGuards } from '@nestjs/common';
-import { Args, Parent, Query, ResolveProperty, Resolver, Mutation } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveProperty, Resolver, Mutation, Info } from '@nestjs/graphql';
 import { IUser } from 'app/user';
 import { AuthGuard } from 'app/user/auth.guard';
 import { ResolveUser } from 'app/user/resolve-user.decorator';
@@ -14,8 +14,9 @@ import { PlaceServiceEntity, UpdatePlaceServiceInput, UpdatePlaceServicePayloadI
 import { IService } from './service.schema';
 import { ServiceService } from './service.service';
 import { RequiredFieldsMissingException } from './exceptions/required-fields-missing.exception';
-import { ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
+import { ProcessGraphQLUploadArgs, graphqlMongodbProjection } from '@gray/graphql-essentials';
 import { ServiceNotOwnedException } from './exceptions/service-not-owned.exception';
+import { GraphQLResolveInfo } from 'graphql';
 
 @Resolver(of => PlaceServiceEntity)
 export class PlaceResolverResolver {
@@ -25,15 +26,15 @@ export class PlaceResolverResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPlaceBusiness])
-  async placeBusinesses(@User() user: IUser) {
-    return this.serviceService.listPlaceServices(user._id);
+  async placeBusinesses(@User() user: IUser, @Info() info: GraphQLResolveInfo) {
+    return this.serviceService.listPlaceServices(user._id, graphqlMongodbProjection(info));
   }
 
   @Mutation(returns => PlaceServiceEntity)
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPlaceBusiness])
-  async publishPlaceBusiness(@User() user: IUser, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
+  async publishPlaceBusiness(@User() user: IUser, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID, @Info() info: GraphQLResolveInfo) {
     const place = await this.serviceService._resolvePlaceService(id);
     if (!user._id.equals(place.user as any)) {
       throw new ServiceNotOwnedException();
@@ -43,7 +44,7 @@ export class PlaceResolverResolver {
     if (fields.length > 0) {
       throw new RequiredFieldsMissingException(fields);
     } else {
-      return await this.serviceService.updatePlaceService(id, { published: true });
+      return await this.serviceService.updatePlaceService(id, { published: true }, graphqlMongodbProjection(info));
     }
   }
 
@@ -62,18 +63,19 @@ export class PlaceResolverResolver {
   @AuthScopes([AuthenticationScope.RegisterPlaceBusiness])
   async updatePlaceBusiness(
     @User() user: IUser,
-    @Args({ name: 'payload', type: () => UpdatePlaceServicePayloadInput }) args: UpdatePlaceServicePayloadInput) {
+    @Args({ name: 'payload', type: () => UpdatePlaceServicePayloadInput }) args: UpdatePlaceServicePayloadInput,
+    @Info() info: GraphQLResolveInfo) {
     const payload = await ProcessGraphQLUploadArgs<UpdatePlaceServicePayloadInput>(args);
     const entity = await this.serviceService._resolvePlaceService(payload.id);
     if (!user._id.equals(entity.user as any)) {
       throw new ServiceNotOwnedException();
     }
-    return await this.serviceService.updatePlaceService(payload.id, payload.data);
+    return await this.serviceService.updatePlaceService(payload.id, payload.data, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('user', type => BusinessUserEntity)
-  async user(@Parent() service: IService) {
-    const doc = await this.userService._resolveUser(service.user as ObjectID);
+  async user(@Parent() service: IService, @Info() info: GraphQLResolveInfo) {
+    const doc = await this.userService._resolveUser(service.user as ObjectID, graphqlMongodbProjection(info));
     return new BusinessUserEntity(doc);
   }
 
@@ -81,12 +83,12 @@ export class PlaceResolverResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPlaceBusiness])
-  async unpublishPlaceBusiness(@User() user: IUser, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
+  async unpublishPlaceBusiness(@User() user: IUser, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID, @Info() info: GraphQLResolveInfo) {
     const place = await this.serviceService._resolvePlaceService(id);
     if (!user._id.equals(place.user as any)) {
       throw new ServiceNotOwnedException();
     }
-    return await this.serviceService.updatePlaceService(id, { published: false });
+    return await this.serviceService.updatePlaceService(id, { published: false }, graphqlMongodbProjection(info));
   }
 
 }
