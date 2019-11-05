@@ -20,7 +20,3 @@ export const PackageSchema = buildSchema(IPackage);
 mongoose.model('Package', PackageSchema);
 
 export type Package = IPackage & mongoose.Document;
-
-export abstract class IQuery {
-  abstract packages(): PackageEntity[];
-}

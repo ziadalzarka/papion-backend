@@ -32,10 +32,3 @@ export const UserSchema = buildSchema(IUser);
 mongoose.model('User', UserSchema);
 
 export type User = IUser & mongoose.Document;
-
-export abstract class IQuery {
-  abstract me(): User | Promise<User>;
-  abstract logIn(email: string, password: string): AuthPayload | Promise<AuthPayload>;
-  abstract signUpClientUser(payload: CreateClientUserInput): typeof UserEntity | Promise<typeof UserEntity>;
-  abstract signUpBusinessUser(payload: CreateBusinessUserInput): typeof UserEntity | Promise<typeof UserEntity>;
-}

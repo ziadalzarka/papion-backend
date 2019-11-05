@@ -7,6 +7,9 @@
     "no-unused-expression": true
   },
   "rules": {
+    "object-literal-shorthand": false,
+    "space-before-function-paren": false,
+    "only-arrow-functions": false,
     "no-empty": false,
     "quotemark": [
       true,

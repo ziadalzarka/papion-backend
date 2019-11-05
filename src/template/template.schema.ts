@@ -17,7 +17,3 @@ export const TemplateSchema = buildSchema(ITemplate);
 mongoose.model('Template', TemplateSchema);
 
 export type Template = ITemplate & mongoose.Document;
-
-export abstract class IQuery {
-  abstract templates(): TemplateEntity[];
-}

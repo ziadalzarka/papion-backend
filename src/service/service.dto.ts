@@ -1,11 +1,13 @@
-import { ObjectID } from 'mongodb';
 import { DatabaseEntity, File } from '@gray/graphql-essentials';
-import { Field, ObjectType, InputType, createUnionType } from 'type-graphql';
-import { UserEntity, BusinessUserEntity } from 'app/user/user.dto';
+import { PackagePriority } from 'app/package/package.interface';
 import { Address, AddressInput, UpdateAddressInput } from 'app/user/address.dto';
-import { PlaceCategory, PersonCategory } from './category.dto';
-import { IsNotEmpty, IsString } from 'class-validator';
 import { BusinessCategory } from 'app/user/business-category.dto';
+import { BusinessUserEntity } from 'app/user/user.dto';
+import { IsNotEmpty } from 'class-validator';
+import { ObjectID } from 'mongodb';
+import { createUnionType, Field, InputType, ObjectType } from 'type-graphql';
+import { PersonCategory, PlaceCategory } from './category.dto';
+import { ResultsPage } from '@gray/graphql-essentials/page.dto';
 
 // Validation decorators are here to validate the required fields internally
 // before publishing but they are not used by NestJS ValidationPipe!
@@ -30,7 +32,11 @@ export class BaseServiceEntity extends DatabaseEntity {
   @Field()
   rating: number;
   @Field()
+  acceptsMultiple: boolean;
+  @Field()
   published: boolean;
+  @Field(type => PackagePriority)
+  packagePriority: PackagePriority;
 }
 
 @ObjectType()
@@ -75,6 +81,8 @@ export class CreatePlaceServiceInput {
   @Field({ nullable: true })
   description?: string;
   @Field({ nullable: true })
+  acceptsMultiple?: boolean;
+  @Field({ nullable: true })
   startingPrice?: number;
   @Field(type => File, { nullable: true })
   coverImage?: string;
@@ -90,6 +98,8 @@ export class UpdatePlaceServiceInput {
   address?: UpdateAddressInput;
   @Field({ nullable: true })
   description?: string;
+  @Field({ nullable: true })
+  acceptsMultiple?: boolean;
   @Field({ nullable: true })
   startingPrice?: number;
   @Field({ nullable: true })
@@ -116,6 +126,8 @@ export class UpdatePersonServiceInput {
   address?: UpdateAddressInput;
   @Field({ nullable: true })
   description?: string;
+  @Field({ nullable: true })
+  acceptsMultiple?: boolean;
   @Field({ nullable: true })
   startingPrice?: number;
   @Field(type => File, { nullable: true })

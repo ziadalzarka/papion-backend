@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SharedModule } from './shared/shared.module';
 import { TemplateModule } from './template/template.module';
 import { PackageModule } from './package/package.module';
+import { ReservationModule } from './reservation/reservation.module';
 import * as mongoose from 'mongoose';
 
 mongoose.set('useNewUrlParser', true);
@@ -40,6 +41,7 @@ mongoose.set('useUnifiedTopology', true);
     SharedModule,
     TemplateModule,
     PackageModule,
+    ReservationModule,
   ],
 })
 export class AppModule { }

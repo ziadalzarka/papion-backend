@@ -36,7 +36,9 @@ type BaseServiceEntity {
   description: String
   startingPrice: Float
   rating: Float!
+  acceptsMultiple: Boolean!
   published: Boolean!
+  packagePriority: PackagePriority!
 }
 
 type BaseUserEntity {
@@ -65,6 +67,8 @@ type BusinessUserEntity {
 
 enum City {
   Damanhur
+  Alexandria
+  Cairo
 }
 
 type ClientUserEntity {
@@ -106,6 +110,7 @@ input CreatePlaceServiceInput {
   name: String!
   address: AddressInput!
   description: String
+  acceptsMultiple: Boolean
   startingPrice: Float
   coverImage: File
   category: PlaceCategory
@@ -114,6 +119,11 @@ input CreatePlaceServiceInput {
 type DatabaseEntity {
   _id: ID!
 }
+
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
 
 """File upload scalar type"""
 scalar File
@@ -127,6 +137,11 @@ input LogInPayload {
   password: String!
 }
 
+input MultipleSearchPayloadInput {
+  defaults: SearchPayloadInput!
+  overrides: [SearchPayloadOverrideInput!]!
+}
+
 type Mutation {
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
   signUpClientUser(payload: CreateClientUserInput!): ClientUserEntity!
@@ -138,6 +153,7 @@ type Mutation {
   createPlaceBusiness(payload: CreatePlaceServiceInput!): PlaceServiceEntity!
   updatePlaceBusiness(payload: UpdatePlaceServicePayloadInput!): PlaceServiceEntity!
   unpublishPlaceBusiness(id: ObjectID!): PlaceServiceEntity!
+  submitRequest(payload: ReserveServiceInput!): ReservationEntity!
 }
 
 """Mongo ObjectID scalar type"""
@@ -170,7 +186,9 @@ type PersonServiceEntity {
   description: String
   startingPrice: Float
   rating: Float!
+  acceptsMultiple: Boolean!
   published: Boolean!
+  packagePriority: PackagePriority!
   image: String
   category: PersonCategory
 }
@@ -190,7 +208,9 @@ type PlaceServiceEntity {
   description: String
   startingPrice: Float
   rating: Float!
+  acceptsMultiple: Boolean!
   published: Boolean!
+  packagePriority: PackagePriority!
   coverImage: String
   category: PlaceCategory
 }
@@ -204,23 +224,59 @@ type Query {
   weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
-  search(payload: SearchPayloadInput!): [ServiceEntity!]!
+  search(payload: SearchPayloadInput!): ServiceSearchOutput!
+  searchMultiple(payload: MultipleSearchPayloadInput!): [ServiceSearchOutput!]!
   personBusiness: PersonServiceEntity!
-  placeBusinesss: [PlaceServiceEntity!]!
+  placeBusinesses: [PlaceServiceEntity!]!
   templates: [TemplateEntity!]!
   packages: [PackageEntity!]!
+  reservations(page: Float): ReservationsPage!
+}
+
+type ReservationEntity {
+  _id: ID!
+  service: ServiceEntity!
+  reservationDay: DateTime!
+  notes: String!
+  status: ReservationStatus!
+}
+
+type ReservationsPage {
+  items: [ReservationEntity!]!
+  hasNext: Boolean!
+  pages: Float!
+}
+
+enum ReservationStatus {
+  Reserved
+  Responded
+  Pending
+  Denied
+  Canceled
+  Closed
+}
+
+input ReserveServiceInput {
+  reservationDay: DateTime!
+  notes: String!
+  service: ObjectID!
 }
 
 input SearchPayloadInput {
-  query: String!
-  category: ServiceCategory!
-  priceRange: PriceRangeInput!
-  packagePriority: [PackagePriority!]!
-  country: Country!
-  city: City!
-  page: Float!
-  orderBy: ServiceSearchOrderBy!
-  sortKey: SortKey!
+  query: String
+  category: ServiceCategory
+  priceRange: PriceRangeInput
+  packagePriority: [PackagePriority!]
+  country: Country
+  city: City
+  page: Float
+  orderBy: ServiceSearchOrderBy
+  sortKey: SortKey
+}
+
+input SearchPayloadOverrideInput {
+  key: String!
+  payload: SearchPayloadInput!
 }
 
 enum ServiceCategory {
@@ -239,6 +295,13 @@ enum ServiceSearchOrderBy {
   Time
   Popularity
   AddedAt
+}
+
+type ServiceSearchOutput {
+  key: String
+  items: [ServiceEntity!]!
+  hasNext: Boolean!
+  pages: Float!
 }
 
 enum SortKey {
@@ -269,6 +332,7 @@ input UpdatePersonServiceInput {
   name: String
   address: UpdateAddressInput
   description: String
+  acceptsMultiple: Boolean
   startingPrice: Float
   image: File
   category: PersonCategory
@@ -278,6 +342,7 @@ input UpdatePlaceServiceInput {
   name: String
   address: AddressInput
   description: String
+  acceptsMultiple: Boolean
   startingPrice: Float
   rating: Float
   coverImage: File

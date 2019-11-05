@@ -25,7 +25,7 @@ export class PlaceResolverResolver {
   @UseGuards(AuthGuard)
   @ResolveUser()
   @AuthScopes([AuthenticationScope.RegisterPlaceBusiness])
-  async placeBusinesss(@User() user: IUser) {
+  async placeBusinesses(@User() user: IUser) {
     return this.serviceService.listPlaceServices(user._id);
   }
 
