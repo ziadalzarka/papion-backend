@@ -13,10 +13,15 @@ import { IReservation } from './reservation.schema';
 import { ObjectID } from 'mongodb';
 import { groundDate } from 'app/shared/date.util';
 import { ReservationDayPassedException } from './exceptions/reservation-day-passed.exception';
+import { ClientUserEntity } from 'app/user/user.dto';
+import { UserService } from 'app/user/user.service';
 @Resolver(of => ReservationEntity)
 export class ReservationResolver {
 
-  constructor(private reservationService: ReservationService, private serviceService: ServiceService) { }
+  constructor(
+    private reservationService: ReservationService,
+    private serviceService: ServiceService,
+    private userService: UserService) { }
 
   // TODO: authentication scopes
   @Mutation(returns => ReservationEntity)
@@ -32,7 +37,7 @@ export class ReservationResolver {
       reservationDay: payload.reservationDay,
       service: payload.service,
     });
-    return await this.reservationService.submitRequest({ ...payload, user: user._id });
+    return await this.reservationService.submitRequest({ ...payload, client: user._id });
   }
 
   // TODO: authentication scopes
@@ -46,6 +51,11 @@ export class ReservationResolver {
   @ResolveProperty('service', type => ServiceEntity)
   async service(@Parent() reservation: IReservation, @Info() info) {
     return await this.serviceService._resolveService(reservation.service as ObjectID, graphqlMongodbProjection(info));
+  }
+
+  @ResolveProperty('client', type => ClientUserEntity)
+  async client(@Parent() reservation: IReservation, @Info() info) {
+    return await this.userService._resolveUser(reservation.client as ObjectID, graphqlMongodbProjection(info));
   }
 
 }

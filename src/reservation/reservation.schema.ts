@@ -16,7 +16,7 @@ export class IReservation {
   @field({ default: ReservationStatus.Pending })
   status: ReservationStatus;
   @field({ ref: 'User' })
-  user: User | ObjectID;
+  client: User | ObjectID;
 }
 
 export const ReservationSchema = buildSchema(IReservation);

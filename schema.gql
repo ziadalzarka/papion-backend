@@ -213,7 +213,7 @@ type PlaceServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
-  reservations: ReservationsPage!
+  reservations(page: Float!): ReservationsPage!
   coverImage: String
   category: PlaceCategory
 }
@@ -242,6 +242,7 @@ type ReservationEntity {
   reservationDay: DateTime!
   notes: String!
   status: ReservationStatus!
+  client: ClientUserEntity!
 }
 
 type ReservationsPage {

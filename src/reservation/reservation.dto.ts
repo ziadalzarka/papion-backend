@@ -3,6 +3,7 @@ import { DatabaseEntity } from '@gray/graphql-essentials';
 import { ObjectType, InputType, Field, registerEnumType } from 'type-graphql';
 import { ServiceEntity } from 'app/service/service.dto';
 import { ResultsPage } from '@gray/graphql-essentials/page.dto';
+import { ClientUserEntity } from 'app/user/user.dto';
 
 @ObjectType()
 export class ReservationEntity extends DatabaseEntity {
@@ -14,6 +15,8 @@ export class ReservationEntity extends DatabaseEntity {
   notes: string;
   @Field(type => ReservationStatus)
   status: ReservationStatus;
+  @Field(type => ClientUserEntity)
+  client: ClientUserEntity;
 }
 
 export enum ReservationStatus {

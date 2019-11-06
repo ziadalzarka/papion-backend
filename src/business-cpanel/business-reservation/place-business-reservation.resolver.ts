@@ -1,12 +1,21 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, ResolveProperty, Parent, Args, Info } from '@nestjs/graphql';
+import { PlaceServiceEntity } from 'app/service/service.dto';
+import { ReservationsPage } from 'app/reservation/reservation.dto';
+import { IPlaceService } from 'app/service/service.schema';
+import { GraphQLResolveInfo } from 'graphql';
+import { BusinessReservationService } from './business-reservation.service';
+import { graphqlMongodbProjection } from '@gray/graphql-essentials';
 
-@Resolver('PlaceBusinessReservation')
+@Resolver(of => PlaceServiceEntity)
 export class PlaceBusinessReservationResolver {
 
-  constructor() { }
+  constructor(private businessReservationService: BusinessReservationService) { }
 
-  // @Query()
-  // placeBusinessReservations() {
-
-  // }
+  @ResolveProperty('reservations', type => ReservationsPage)
+  async personBusinessReservations(
+    @Parent() placeService: IPlaceService,
+    @Args({ name: 'page', type: () => Number }) page: number,
+    @Info() info: GraphQLResolveInfo) {
+    return await this.businessReservationService.listReservations(placeService._id, page, graphqlMongodbProjection(info));
+  }
 }
