@@ -5,6 +5,8 @@ import { IPlaceService } from 'app/service/service.schema';
 import { GraphQLResolveInfo } from 'graphql';
 import { BusinessReservationService } from './business-reservation.service';
 import { graphqlMongodbProjection } from '@gray/graphql-essentials';
+import { AuthenticationScope } from 'app/user/token.interface';
+import { AuthScopes } from 'app/user/scope.decorator';
 
 @Resolver(of => PlaceServiceEntity)
 export class PlaceBusinessReservationResolver {
@@ -12,10 +14,11 @@ export class PlaceBusinessReservationResolver {
   constructor(private businessReservationService: BusinessReservationService) { }
 
   @ResolveProperty('reservations', type => ReservationsPage)
-  async personBusinessReservations(
+  @AuthScopes([AuthenticationScope.ManageReservations])
+  async resolvePersonBusinessReservations(
     @Parent() placeService: IPlaceService,
     @Args({ name: 'page', type: () => Number }) page: number,
     @Info() info: GraphQLResolveInfo) {
-    return await this.businessReservationService.listReservations(placeService._id, page, graphqlMongodbProjection(info));
+    return await this.businessReservationService.listServiceReservations(placeService._id, page, graphqlMongodbProjection(info));
   }
 }

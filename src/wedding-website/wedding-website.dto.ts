@@ -47,4 +47,6 @@ export class WeddingWebsiteInput {
   data: WeddingWebsiteDataInput;
   @Field(type => ObjectID)
   templateId: ObjectID;
+  @Field(type => ObjectID)
+  reservationId: ObjectID;
 }

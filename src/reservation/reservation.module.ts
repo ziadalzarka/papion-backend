@@ -1,10 +1,10 @@
-import { ReservationSchema } from './reservation.schema';
 import { Module } from '@nestjs/common';
-import { ReservationService } from './reservation.service';
-import { ReservationResolver } from './reservation.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServiceModule } from 'app/service/service.module';
 import { UserModule } from 'app/user';
+import { ReservationResolver } from './reservation.resolver';
+import { ReservationSchema } from './reservation.schema';
+import { ReservationService } from './reservation.service';
 
 @Module({
   imports: [
@@ -13,6 +13,6 @@ import { UserModule } from 'app/user';
     ServiceModule,
   ],
   providers: [ReservationService, ReservationResolver],
-  exports: [MongooseModule],
+  exports: [MongooseModule, ReservationService],
 })
 export class ReservationModule { }

@@ -1,14 +1,13 @@
 import { DatabaseEntity, File } from '@gray/graphql-essentials';
 import { PackagePriority } from 'app/package/package.interface';
+import { ReservationsPage } from 'app/reservation/reservation.dto';
 import { Address, AddressInput, UpdateAddressInput } from 'app/user/address.dto';
 import { BusinessCategory } from 'app/user/business-category.dto';
 import { BusinessUserEntity } from 'app/user/user.dto';
 import { IsNotEmpty } from 'class-validator';
 import { ObjectID } from 'mongodb';
-import { createUnionType, Field, InputType, ObjectType } from 'type-graphql';
+import { createUnionType, Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { PersonCategory, PlaceCategory } from './category.dto';
-import { ResultsPage } from '@gray/graphql-essentials/page.dto';
-import { ReservationEntity, ReservationsPage } from 'app/reservation/reservation.dto';
 
 // Validation decorators are here to validate the required fields internally
 // before publishing but they are not used by NestJS ValidationPipe!
@@ -18,7 +17,7 @@ export class BaseServiceEntity extends DatabaseEntity {
   @Field()
   name: string;
   @Field(type => BusinessUserEntity)
-  user: BusinessUserEntity;
+  owner: BusinessUserEntity;
   @Field(type => BusinessCategory)
   businessCategory: BusinessCategory;
   @IsNotEmpty()
@@ -38,6 +37,8 @@ export class BaseServiceEntity extends DatabaseEntity {
   published: boolean;
   @Field(type => PackagePriority)
   packagePriority: PackagePriority;
+  @Field(type => [String])
+  gallery: string[];
   @Field(type => ReservationsPage)
   reservations: ReservationsPage;
 }
@@ -76,6 +77,14 @@ export const ServiceEntity = createUnionType({
 });
 
 @InputType()
+export class UpdateGalleryInput {
+  @Field(type => [File], { nullable: true, description: 'Add images to gallery' })
+  add?: string[];
+  @Field(type => [String], { nullable: true, description: 'Remove images from gallery' })
+  remove?: string[];
+}
+
+@InputType()
 export class CreatePlaceServiceInput {
   @Field()
   name: string;
@@ -91,6 +100,8 @@ export class CreatePlaceServiceInput {
   coverImage?: string;
   @Field(type => PlaceCategory, { nullable: true })
   category?: PlaceCategory;
+  @Field(type => [File], { nullable: true })
+  gallery?: string[];
 }
 
 @InputType()
@@ -111,6 +122,8 @@ export class UpdatePlaceServiceInput {
   coverImage?: string;
   @Field(type => PlaceCategory, { nullable: true })
   category?: PlaceCategory;
+  @Field(type => UpdateGalleryInput, { nullable: true })
+  gallery?: UpdateGalleryInput;
 }
 
 @InputType()
@@ -137,4 +150,6 @@ export class UpdatePersonServiceInput {
   image?: string;
   @Field(type => PersonCategory, { nullable: true })
   category?: PersonCategory;
+  @Field(type => UpdateGalleryInput, { nullable: true })
+  gallery?: UpdateGalleryInput;
 }

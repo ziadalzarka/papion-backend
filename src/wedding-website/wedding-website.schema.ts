@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { WeddingWebsiteData, WeddingWebsiteInput, WeddingWebsiteEntity } from './wedding-website.dto';
 import { User } from 'app/user/user.schema';
 import { Template } from 'app/template/template.schema';
+import { IPlaceService } from 'app/service/service.schema';
 
 @schema({})
 export class IWeddingWebsite {
@@ -17,6 +18,8 @@ export class IWeddingWebsite {
   template: Template | ObjectID;
   @field({ ref: 'User' })
   user: User | ObjectID;
+  @field({ ref: 'PlaceService' })
+  venue: IPlaceService | ObjectID;
 }
 
 export const WeddingWebsiteSchema = buildSchema(IWeddingWebsite);

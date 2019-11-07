@@ -4,3 +4,4 @@ export * from './database.dto';
 export * from './file.scalar';
 export * from './nest-await';
 export { graphqlMongodbProjection } from './projection.util';
+export * from './population.util';

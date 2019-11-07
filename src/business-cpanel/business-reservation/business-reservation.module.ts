@@ -5,6 +5,8 @@ import { PersonBusinessReservationResolver } from './person-business-reservation
 import { PlaceBusinessReservationResolver } from './place-business-reservation.resolver';
 import { ServiceModule } from 'app/service/service.module';
 import { UserModule } from 'app/user';
+import { BusinessReservationResolver } from './business-reservation.resolver';
+import { BusinessCalendarResolver } from 'app/business-cpanel/business-reservation/business-calendar.resolver';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { UserModule } from 'app/user';
     BusinessReservationService,
     PersonBusinessReservationResolver,
     PlaceBusinessReservationResolver,
+    BusinessReservationResolver,
+    BusinessCalendarResolver,
   ],
 })
 export class BusinessReservationModule { }

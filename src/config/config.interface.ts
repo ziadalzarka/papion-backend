@@ -5,6 +5,7 @@ export interface ApplicationMetadata {
   port?: number;
   cookieMaxAge?: number;
   pageSize?: number;
+  production?: boolean;
 }
 
 export interface DatabaseConfiguration {

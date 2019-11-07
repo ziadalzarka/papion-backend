@@ -30,7 +30,7 @@ type AuthPayload {
 type BaseServiceEntity {
   _id: ID!
   name: String!
-  user: BusinessUserEntity!
+  owner: BusinessUserEntity!
   businessCategory: BusinessCategory!
   address: Address!
   description: String
@@ -39,6 +39,7 @@ type BaseServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  gallery: [String!]!
   reservations: ReservationsPage!
 }
 
@@ -51,9 +52,23 @@ type BaseUserEntity {
   userType: UserType!
 }
 
+input BusinessCalendarQueryInput {
+  from: DateTime!
+  to: DateTime!
+  statuses: [ReservationStatus!]
+  serviceId: ObjectID!
+}
+
 enum BusinessCategory {
   Place
   Person
+}
+
+input BusinessReservationResponseInput {
+  accepted: Boolean!
+  startingPrice: Float!
+  availableDates: [DateTime!]!
+  notes: String!
 }
 
 type BusinessUserEntity {
@@ -115,6 +130,7 @@ input CreatePlaceServiceInput {
   startingPrice: Float
   coverImage: File
   category: PlaceCategory
+  gallery: [File!]
 }
 
 type DatabaseEntity {
@@ -144,7 +160,6 @@ input MultipleSearchPayloadInput {
 }
 
 type Mutation {
-  createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
   signUpClientUser(payload: CreateClientUserInput!): ClientUserEntity!
   signUpBusinessUser(payload: CreateBusinessUserInput!): BusinessUserEntity!
   publishPersonBusiness: PersonServiceEntity!
@@ -154,7 +169,14 @@ type Mutation {
   createPlaceBusiness(payload: CreatePlaceServiceInput!): PlaceServiceEntity!
   updatePlaceBusiness(payload: UpdatePlaceServicePayloadInput!): PlaceServiceEntity!
   unpublishPlaceBusiness(id: ObjectID!): PlaceServiceEntity!
+  createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
   submitRequest(payload: ReserveServiceInput!): ReservationEntity!
+  clientRefuseReservation(id: ObjectID!): ReservationEntity!
+  clientApproveReservation(id: ObjectID!): ReservationEntity!
+  businessRespondToReservation(payload: RespondToReservationInput!): ReservationEntity!
+  businessRefuseReservation(id: ObjectID!): ReservationEntity!
+  businessConfirmReservation(id: ObjectID!): ReservationEntity!
+  businessCancelReservation(id: ObjectID!): ReservationEntity!
 }
 
 """Mongo ObjectID scalar type"""
@@ -173,6 +195,12 @@ enum PackagePriority {
   Free
 }
 
+input PersonBusinessCalendarQueryInput {
+  from: DateTime!
+  to: DateTime!
+  statuses: [ReservationStatus!]
+}
+
 enum PersonCategory {
   Photographer
   WeddingPlanner
@@ -181,7 +209,7 @@ enum PersonCategory {
 type PersonServiceEntity {
   _id: ID!
   name: String!
-  user: BusinessUserEntity!
+  owner: BusinessUserEntity!
   businessCategory: BusinessCategory!
   address: Address!
   description: String
@@ -190,9 +218,33 @@ type PersonServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  gallery: [String!]!
   reservations(page: Float!): ReservationsPage!
   image: String
   category: PersonCategory
+}
+
+input PlaceBusinessCalendarQueryInput {
+  from: DateTime!
+  to: DateTime!
+  statuses: [ReservationStatus!]
+  serviceId: ObjectID!
+}
+
+type PlaceBusinessReservationEntity {
+  _id: ID!
+  service: PlaceServiceEntity!
+  reservationDay: DateTime!
+  notes: String!
+  status: ReservationStatus!
+  client: ClientUserEntity!
+  response: ReservationResponse
+}
+
+type PlaceBusinessReservationEntityPage {
+  edges: [PlaceBusinessReservationEntity!]!
+  pages: Float!
+  hasNext: Boolean!
 }
 
 enum PlaceCategory {
@@ -204,7 +256,7 @@ enum PlaceCategory {
 type PlaceServiceEntity {
   _id: ID!
   name: String!
-  user: BusinessUserEntity!
+  owner: BusinessUserEntity!
   businessCategory: BusinessCategory!
   address: Address!
   description: String
@@ -213,6 +265,7 @@ type PlaceServiceEntity {
   acceptsMultiple: Boolean!
   published: Boolean!
   packagePriority: PackagePriority!
+  gallery: [String!]!
   reservations(page: Float!): ReservationsPage!
   coverImage: String
   category: PlaceCategory
@@ -224,16 +277,20 @@ input PriceRangeInput {
 }
 
 type Query {
-  weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
   search(payload: SearchPayloadInput!): ServiceSearchOutput!
   searchMultiple(payload: MultipleSearchPayloadInput!): [ServiceSearchOutput!]!
   personBusiness: PersonServiceEntity!
   placeBusinesses: [PlaceServiceEntity!]!
+  placeBusiness(id: ObjectID!): PlaceServiceEntity!
+  weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   templates: [TemplateEntity!]!
-  packages: [PackageEntity!]!
   reservations(page: Float): ReservationsPage!
+  packages: [PackageEntity!]!
+  placeBusinessReservations(page: Float!): PlaceBusinessReservationEntityPage!
+  placeBusinessCalendar(payload: PlaceBusinessCalendarQueryInput!): [ReservationEntity!]!
+  personBusinessCalendar(payload: PersonBusinessCalendarQueryInput!): [ReservationEntity!]!
 }
 
 type ReservationEntity {
@@ -243,6 +300,14 @@ type ReservationEntity {
   notes: String!
   status: ReservationStatus!
   client: ClientUserEntity!
+  response: ReservationResponse
+}
+
+type ReservationResponse {
+  accepted: Boolean!
+  startingPrice: Float!
+  availableDates: [DateTime!]!
+  notes: String!
 }
 
 type ReservationsPage {
@@ -253,17 +318,24 @@ type ReservationsPage {
 
 enum ReservationStatus {
   Reserved
+  PendingConfirmation
   Responded
   Pending
-  Denied
+  ClientRefused
+  BusinessRefused
+  LeftUnconfirmed
   Canceled
-  Closed
 }
 
 input ReserveServiceInput {
   reservationDay: DateTime!
   notes: String!
   service: ObjectID!
+}
+
+input RespondToReservationInput {
+  id: ObjectID!
+  data: BusinessReservationResponseInput!
 }
 
 input SearchPayloadInput {
@@ -332,6 +404,14 @@ input UpdateAddressInput {
   coords: UpdateAddressCoordinatesInput
 }
 
+input UpdateGalleryInput {
+  """Add images to gallery"""
+  add: [File!]
+
+  """Remove images from gallery"""
+  remove: [String!]
+}
+
 input UpdatePersonServiceInput {
   name: String
   address: UpdateAddressInput
@@ -340,6 +420,7 @@ input UpdatePersonServiceInput {
   startingPrice: Float
   image: File
   category: PersonCategory
+  gallery: UpdateGalleryInput
 }
 
 input UpdatePlaceServiceInput {
@@ -351,6 +432,7 @@ input UpdatePlaceServiceInput {
   rating: Float
   coverImage: File
   category: PlaceCategory
+  gallery: UpdateGalleryInput
 }
 
 input UpdatePlaceServicePayloadInput {
@@ -385,10 +467,12 @@ type WeddingWebsiteEntity {
   user: ClientUserEntity!
   href: String!
   template: TemplateEntity!
+  venue: PlaceServiceEntity!
 }
 
 input WeddingWebsiteInput {
   subdomain: String!
   data: WeddingWebsiteDataInput!
   templateId: ObjectID!
+  reservationId: ObjectID!
 }

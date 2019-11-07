@@ -16,7 +16,7 @@ export class IService {
   name: string;
   @indexed
   @field({ ref: 'User' })
-  user: User | ObjectID;
+  owner: User | ObjectID;
   @indexed
   @field
   category: PlaceCategory | PersonCategory;
@@ -43,6 +43,8 @@ export class IService {
   @indexed
   @field({ default: () => new Date() })
   addedAt: Date;
+  @field({ default: [] })
+  gallery: string[];
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })

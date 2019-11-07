@@ -4,7 +4,8 @@
     "domain": "localhost",
     "port": 4000,
     "cookieMaxAge": 604800,
-    "pageSize": 10
+    "pageSize": 10,
+    "production": false
   },
   "database": {
     "host": "198.199.91.193",

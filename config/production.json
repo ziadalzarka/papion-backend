@@ -1,7 +1,8 @@
 {
   "$schema": "../src/config/config.schema.json",
   "metadata": {
-    "domain": "papion.love"
+    "domain": "papion.love",
+    "production": true
   },
   "database": {
     "host": "mongo"

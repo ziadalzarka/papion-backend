@@ -11,6 +11,8 @@ import { ServiceSearchOrderBy } from './service-search-order-by.dto';
 import { PersonServiceEntity, PlaceServiceEntity } from './service.dto';
 import { SortKey } from './sort-key.dto';
 import { ServiceNotAvailableException } from './exceptions/service-not-available.exception';
+import { ServiceNotFoundException } from './exceptions/service-not-found.exception';
+import { ServiceNotOwnedException } from './exceptions/service-not-owned.exception';
 
 @Injectable()
 export class ServiceService {
@@ -33,11 +35,19 @@ export class ServiceService {
   }
 
   async _resolvePersonService(userId: ObjectID) {
-    return await this.personServiceModel.findOne({ user: userId });
+    return await this.personServiceModel.findOne({ owner: userId });
   }
 
-  async updatePersonService(userId: ObjectID, payload: Partial<IPersonService>, projection = {}) {
-    const doc = await this.personServiceModel.findOneAndUpdate({ user: userId }, payload, {
+  async validateServiceOwned(serviceId: ObjectID, userId: ObjectID) {
+    const service = await this.serviceModel.findById(serviceId);
+    if (!userId.equals(service.owner as any)) {
+      throw new ServiceNotOwnedException();
+    }
+    return service;
+  }
+
+  async updatePersonService(userId: ObjectID, payload: Partial<IPersonService> | any, projection = {}) {
+    const doc = await this.personServiceModel.findOneAndUpdate({ owner: userId }, payload, {
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
@@ -47,12 +57,12 @@ export class ServiceService {
   }
 
   async getPersonService(userId: ObjectID, projection = {}) {
-    const doc = await this.personServiceModel.findOne({ user: userId }, projection);
+    const doc = await this.personServiceModel.findOne({ owner: userId }, projection);
     return new PersonServiceEntity(doc);
   }
 
   async listPlaceServices(userId: ObjectID, projection = {}) {
-    const docs = await this.placeServiceModel.find({ user: userId }, projection);
+    const docs = await this.placeServiceModel.find({ owner: userId }, projection);
     return docs.map(doc => new PlaceServiceEntity(doc));
   }
 
@@ -61,13 +71,16 @@ export class ServiceService {
     return new PlaceServiceEntity(doc);
   }
 
-  async updatePlaceService(_id: ObjectID, payload: Partial<IPlaceService>, projection = {}) {
+  async updatePlaceService(_id: ObjectID, payload: Partial<IPlaceService> | any, projection = {}) {
     const doc = await this.placeServiceModel.findByIdAndUpdate(_id, payload, { new: true, select: projection });
     return new PlaceServiceEntity(doc);
   }
 
-  async _resolvePlaceService(_id: ObjectID) {
-    const doc = await this.placeServiceModel.findById(_id);
+  async _resolvePlaceService(_id: ObjectID, projection = {}) {
+    const doc = await this.placeServiceModel.findById(_id, projection);
+    if (!doc) {
+      throw new ServiceNotFoundException();
+    }
     return new PlaceServiceEntity(doc);
   }
 

@@ -1,20 +1,21 @@
 import { graphqlMongodbProjection } from '@gray/graphql-essentials';
-import { AuthGuard } from 'app/user/auth.guard';
-import { ReservationService } from './reservation.service';
-import { Resolver, Mutation, Args, Query, ResolveProperty, Parent, Info } from '@nestjs/graphql';
-import { ReserveServiceInput, ReservationEntity, ReservationsPage, ReservationStatus } from './reservation.dto';
-import { ServiceService } from 'app/service/service.service';
 import { UseGuards } from '@nestjs/common';
-import { ResolveUser } from 'app/user/resolve-user.decorator';
-import { User } from 'app/user/user.decorator';
-import { IUser } from 'app/user';
+import { Args, Info, Mutation, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
 import { ServiceEntity } from 'app/service/service.dto';
-import { IReservation } from './reservation.schema';
-import { ObjectID } from 'mongodb';
+import { ServiceService } from 'app/service/service.service';
 import { groundDate } from 'app/shared/date.util';
-import { ReservationDayPassedException } from './exceptions/reservation-day-passed.exception';
+import { IUser } from 'app/user';
+import { AuthGuard } from 'app/user/auth.guard';
+import { AuthScopes } from 'app/user/scope.decorator';
+import { AuthenticationScope } from 'app/user/token.interface';
+import { User } from 'app/user/user.decorator';
 import { ClientUserEntity } from 'app/user/user.dto';
 import { UserService } from 'app/user/user.service';
+import { ObjectID } from 'mongodb';
+import { ReservationDayPassedException } from './exceptions/reservation-day-passed.exception';
+import { ReservationEntity, ReservationsPage, ReserveServiceInput, ReservationStatus } from './reservation.dto';
+import { IReservation } from './reservation.schema';
+import { ReservationService } from './reservation.service';
 @Resolver(of => ReservationEntity)
 export class ReservationResolver {
 
@@ -23,10 +24,9 @@ export class ReservationResolver {
     private serviceService: ServiceService,
     private userService: UserService) { }
 
-  // TODO: authentication scopes
   @Mutation(returns => ReservationEntity)
   @UseGuards(AuthGuard)
-  @ResolveUser()
+  @AuthScopes([AuthenticationScope.Reserve])
   async submitRequest(@User() user: IUser, @Args({ name: 'payload', type: () => ReserveServiceInput }) payload: ReserveServiceInput) {
     payload.reservationDay = groundDate(payload.reservationDay);
     if (groundDate(new Date()) > payload.reservationDay) {
@@ -40,12 +40,31 @@ export class ReservationResolver {
     return await this.reservationService.submitRequest({ ...payload, client: user._id });
   }
 
-  // TODO: authentication scopes
+  @Mutation(returns => ReservationEntity)
+  @UseGuards(AuthGuard)
+  @AuthScopes([AuthenticationScope.Reserve])
+  async clientRefuseReservation(@User() user: IUser, @Info() info, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
+    return await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
+      _id: id,
+      status: ReservationStatus.ClientRefused,
+    }, graphqlMongodbProjection(info));
+  }
+
+  @Mutation(returns => ReservationEntity)
+  @UseGuards(AuthGuard)
+  @AuthScopes([AuthenticationScope.Reserve])
+  async clientApproveReservation(@User() user: IUser, @Info() info, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
+    return await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
+      _id: id,
+      status: ReservationStatus.PendingConfirmation,
+    }, graphqlMongodbProjection(info));
+  }
+
   @Query(returns => ReservationsPage)
   @UseGuards(AuthGuard)
-  @ResolveUser()
-  async reservations(@User() user: IUser, @Args({ name: 'page', type: () => Number, nullable: true }) page?: number) {
-    return await this.reservationService.listReservations(user._id, page);
+  @AuthScopes([AuthenticationScope.Reserve])
+  async reservations(@User() user: IUser, @Info() info, @Args({ name: 'page', type: () => Number, nullable: true }) page?: number) {
+    return await this.reservationService.listReservations(user._id, page, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('service', type => ServiceEntity)

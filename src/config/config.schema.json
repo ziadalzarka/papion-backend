@@ -43,6 +43,9 @@
               },
               "pageSize": {
                   "type": "number"
+              },
+              "production": {
+                  "type": "boolean"
               }
           },
           "additionalProperties": false

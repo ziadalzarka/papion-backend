@@ -37,12 +37,12 @@ export class UserService {
   private userToAuthenticationScopes(entity: User) {
     if (entity.userType === UserType.Business) {
       if (entity.businessCategory === BusinessCategory.Person) {
-        return [AuthenticationScope.RegisterPersonBusiness];
+        return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPersonBusiness];
       } else {
-        return [AuthenticationScope.RegisterPlaceBusiness];
+        return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPlaceBusiness];
       }
     } else {
-      return [AuthenticationScope.WeddingWebsites];
+      return [AuthenticationScope.WeddingWebsites, AuthenticationScope.Reserve];
     }
   }
 

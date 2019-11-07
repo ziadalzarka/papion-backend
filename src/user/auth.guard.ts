@@ -6,6 +6,7 @@ import { Reflector } from '@nestjs/core';
 import { UserService } from './user.service';
 import { AuthenticationScope } from './token.interface';
 import { MissingScopesException } from './exceptions/missing-scopes.exception';
+import { ObjectID } from 'bson';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -32,6 +33,7 @@ export class AuthGuard implements CanActivate {
       if (!decoded) {
         throw new UnauthorizedException();
       } else {
+        req.user = { _id: ObjectID.createFromHexString(decoded._id) };
         if (this.isUserResolveEnabled(context)) {
           req.user = await this.userService._resolveUser(decoded._id);
         }

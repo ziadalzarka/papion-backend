@@ -17,6 +17,9 @@ import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-websit
 import { WeddingWebsiteEntity, WeddingWebsiteInput } from './wedding-website.dto';
 import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
+import { IUser } from 'app/user';
+import { PlaceServiceEntity } from 'app/service/service.dto';
+import { ServiceService } from 'app/service/service.service';
 
 @InputType()
 class FileUploadInput {
@@ -30,16 +33,18 @@ export class WeddingWebsiteResolver {
   constructor(
     private weddingWebsiteService: WeddingWebsiteService,
     private userService: UserService,
-    private templateService: TemplateService) { }
+    private templateService: TemplateService,
+    private serviceService: ServiceService) { }
 
   @Mutation(returns => WeddingWebsiteEntity)
-  @ResolveUser()
   @AuthScopes([AuthenticationScope.WeddingWebsites])
   @UseGuards(AuthGuard)
   async createWeddingWebsite(
-    @User() user,
+    @User() user: IUser,
     @Args({ type: () => WeddingWebsiteInput, name: 'payload' }) args: WeddingWebsiteInput) {
     const payload = await ProcessGraphQLUploadArgs<WeddingWebsiteInput>(args);
+    await this.weddingWebsiteService.validateWeddingWebsiteQuotaAvailable(user._id);
+    const venue = await this.weddingWebsiteService.validateReservation(payload.reservationId, user._id);
     await this.templateService.validateTemplateUsable(payload.templateId);
     await this.weddingWebsiteService.validateWeddingWebsiteAvailable(payload.subdomain);
     await this.weddingWebsiteService.registerWeddingWebsite(payload.subdomain);
@@ -47,6 +52,7 @@ export class WeddingWebsiteResolver {
       ...payload,
       user: user._id,
       template: payload.templateId,
+      venue: venue as ObjectID,
     });
   }
 
@@ -58,6 +64,11 @@ export class WeddingWebsiteResolver {
   @ResolveProperty('template', type => TemplateEntity)
   async template(@Parent() weddingWebsite: WeddingWebsite, @Info() info) {
     return this.templateService._resolveTemplate(weddingWebsite.template as ObjectID, graphqlMongodbProjection(info));
+  }
+
+  @ResolveProperty('venue', type => PlaceServiceEntity)
+  async venue(@Parent() weddingWebsite: WeddingWebsite, @Info() info) {
+    return await this.serviceService._resolvePlaceService(weddingWebsite.venue as ObjectID, graphqlMongodbProjection(info));
   }
 
   @ResolveProperty('href', type => String)

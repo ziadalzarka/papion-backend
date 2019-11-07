@@ -1,14 +1,26 @@
 import { ObjectID } from 'mongodb';
 import { DatabaseEntity } from '@gray/graphql-essentials';
 import { ObjectType, InputType, Field, registerEnumType } from 'type-graphql';
-import { ServiceEntity } from 'app/service/service.dto';
+import { ServiceEntity, PlaceServiceEntity } from 'app/service/service.dto';
 import { ResultsPage } from '@gray/graphql-essentials/page.dto';
 import { ClientUserEntity } from 'app/user/user.dto';
 
 @ObjectType()
+export class ReservationResponse {
+  @Field()
+  accepted: boolean;
+  @Field()
+  startingPrice: number;
+  @Field(type => [Date])
+  availableDates: Date[];
+  @Field()
+  notes: string;
+}
+
+@ObjectType()
 export class ReservationEntity extends DatabaseEntity {
   @Field(type => ServiceEntity)
-  service: typeof ServiceEntity;
+  service: typeof ServiceEntity | any;
   @Field()
   reservationDay: Date;
   @Field()
@@ -17,15 +29,35 @@ export class ReservationEntity extends DatabaseEntity {
   status: ReservationStatus;
   @Field(type => ClientUserEntity)
   client: ClientUserEntity;
+  @Field(type => ReservationResponse, { nullable: true })
+  response?: ReservationResponse;
+}
+
+@ObjectType()
+export class PlaceBusinessReservationEntity extends ReservationEntity {
+  @Field(type => PlaceServiceEntity)
+  service: typeof PlaceServiceEntity;
+}
+
+@ObjectType()
+export class PlaceBusinessReservationEntityPage implements ResultsPage {
+  @Field(type => [PlaceBusinessReservationEntity])
+  edges: PlaceBusinessReservationEntity[];
+  @Field()
+  pages: number;
+  @Field()
+  hasNext: boolean;
 }
 
 export enum ReservationStatus {
   Reserved = 'reserved',
+  PendingConfirmation = 'pending_confirmation',
   Responded = 'responded',
   Pending = 'pending',
-  Denied = 'denied',
+  ClientRefused = 'client_refused',
+  BusinessRefused = 'business_refused',
+  LeftUnconfirmed = 'left_unconfirmed',
   Canceled = 'canceled',
-  Closed = 'closed',
 }
 
 registerEnumType(ReservationStatus, { name: 'ReservationStatus' });
