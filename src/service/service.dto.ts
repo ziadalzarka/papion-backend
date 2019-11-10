@@ -51,6 +51,8 @@ export class PlaceServiceEntity extends BaseServiceEntity {
   @IsNotEmpty()
   @Field(type => PlaceCategory, { nullable: true })
   category?: PlaceCategory;
+  @Field({ nullable: true })
+  capacity?: number;
 }
 
 @ObjectType()
@@ -102,6 +104,8 @@ export class CreatePlaceServiceInput {
   category?: PlaceCategory;
   @Field(type => [File], { nullable: true })
   gallery?: string[];
+  @Field({ nullable: true })
+  capacity?: number;
 }
 
 @InputType()
@@ -124,6 +128,8 @@ export class UpdatePlaceServiceInput {
   category?: PlaceCategory;
   @Field(type => UpdateGalleryInput, { nullable: true })
   gallery?: UpdateGalleryInput;
+  @Field({ nullable: true })
+  capacity?: number;
 }
 
 @InputType()

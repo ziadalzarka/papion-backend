@@ -48,6 +48,8 @@ export class SearchPayloadInput {
   orderBy?: ServiceSearchOrderBy;
   @Field(type => SortKey, { nullable: true })
   sortKey?: SortKey;
+  @Field({ nullable: true })
+  minCapacity?: number;
 }
 
 @InputType()

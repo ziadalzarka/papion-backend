@@ -131,6 +131,7 @@ input CreatePlaceServiceInput {
   coverImage: File
   category: PlaceCategory
   gallery: [File!]
+  capacity: Float
 }
 
 type DatabaseEntity {
@@ -284,6 +285,7 @@ type PlaceServiceEntity {
   reservations(page: Float!): ReservationsPage!
   coverImage: String
   category: PlaceCategory
+  capacity: Float
 }
 
 input PriceRangeInput {
@@ -365,6 +367,7 @@ input SearchPayloadInput {
   page: Float
   orderBy: ServiceSearchOrderBy
   sortKey: SortKey
+  minCapacity: Float
 }
 
 input SearchPayloadOverrideInput {
@@ -465,6 +468,7 @@ input UpdatePlaceServiceInput {
   coverImage: File
   category: PlaceCategory
   gallery: UpdateGalleryInput
+  capacity: Float
 }
 
 input UpdatePlaceServicePayloadInput {

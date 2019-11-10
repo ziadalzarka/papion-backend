@@ -110,6 +110,7 @@ export class ServiceService {
       ...payload.city && { 'address.city': payload.city },
       ...payload.category && { category: payload.category },
       ...payload.packagePriority && { packagePriority: payload.packagePriority },
+      ...payload.minCapacity && { capacity: { $gte: payload.minCapacity } },
       ...payload.priceRange && {
         $and: [
           { startingPrice: { $gte: payload.priceRange.startPrice } },

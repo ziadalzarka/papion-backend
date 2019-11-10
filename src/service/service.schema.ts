@@ -56,6 +56,9 @@ export class IPlaceService extends IService {
   coverImage: string;
   @field
   category: PlaceCategory;
+  @indexed
+  @field
+  capacity: number;
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
