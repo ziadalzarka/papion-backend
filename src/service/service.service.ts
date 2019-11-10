@@ -129,6 +129,10 @@ export class ServiceService {
         return { rating: sortKey };
       case ServiceSearchOrderBy.AddedAt:
         return { addedAt: sortKey };
+      case ServiceSearchOrderBy.Popularity:
+        return { popularity: sortKey };
+      case ServiceSearchOrderBy.Time:
+        return { reservedDays: sortKey };
       default:
         return {};
     }

@@ -48,6 +48,8 @@ export class IService {
   @indexed
   @field({ default: [] })
   reservedDays: Date[];
+  @field
+  popularity: number;
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
@@ -59,6 +61,8 @@ export class IPlaceService extends IService {
   @indexed
   @field
   capacity: number;
+  @field({ default: true })
+  weddingWebsitesEnabled: boolean;
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })

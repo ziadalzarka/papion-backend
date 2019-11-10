@@ -132,6 +132,7 @@ input CreatePlaceServiceInput {
   category: PlaceCategory
   gallery: [File!]
   capacity: Float
+  weddingWebsitesEnabled: Float
 }
 
 type DatabaseEntity {
@@ -286,6 +287,7 @@ type PlaceServiceEntity {
   coverImage: String
   category: PlaceCategory
   capacity: Float
+  weddingWebsitesEnabled: Float!
 }
 
 input PriceRangeInput {
@@ -469,6 +471,7 @@ input UpdatePlaceServiceInput {
   category: PlaceCategory
   gallery: UpdateGalleryInput
   capacity: Float
+  weddingWebsitesEnabled: Float
 }
 
 input UpdatePlaceServicePayloadInput {

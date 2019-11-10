@@ -1,6 +1,6 @@
 import { graphqlMongodbProjection } from '@gray/graphql-essentials';
 import { File, ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, Logger } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveProperty, Resolver, Info } from '@nestjs/graphql';
 import { TemplateEntity } from 'app/template/template.dto';
 import { TemplateService } from 'app/template/template.service';
@@ -44,7 +44,7 @@ export class WeddingWebsiteResolver {
     @Args({ type: () => WeddingWebsiteInput, name: 'payload' }) args: WeddingWebsiteInput) {
     const payload = await ProcessGraphQLUploadArgs<WeddingWebsiteInput>(args);
     await this.weddingWebsiteService.validateWeddingWebsiteQuotaAvailable(user._id);
-    const venue = await this.weddingWebsiteService.validateReservation(payload.reservationId, user._id);
+    const venueId = await this.weddingWebsiteService.validateReservation(payload.reservationId, user._id) as any;
     await this.templateService.validateTemplateUsable(payload.templateId);
     await this.weddingWebsiteService.validateWeddingWebsiteAvailable(payload.subdomain);
     await this.weddingWebsiteService.registerWeddingWebsite(payload.subdomain);
@@ -52,7 +52,7 @@ export class WeddingWebsiteResolver {
       ...payload,
       user: user._id,
       template: payload.templateId,
-      venue: venue as ObjectID,
+      venue: venueId,
     });
   }
 

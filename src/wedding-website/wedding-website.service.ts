@@ -11,6 +11,8 @@ import { ReservationStatus } from 'app/reservation/reservation.dto';
 import { ReservationNotConfirmedException } from './exceptions/reservation-not-confirmed.exception';
 import { ReservationNotOwnedException } from 'app/reservation/exceptions/reservation-not-owned.exception';
 import { WeddingWebsiteQuotaCompleteException } from './exceptions/wedding-website-quota-complete.exception';
+import { PlaceService } from 'app/service/service.schema';
+import { WeddingWebsitesDisabledException } from './exceptions/wedding-websites-disabled.exception';
 
 @Injectable()
 export class WeddingWebsiteService {
@@ -59,14 +61,21 @@ export class WeddingWebsiteService {
   }
 
   async validateReservation(reservationId: ObjectID, userId: ObjectID) {
-    const reservation = await this.reservationService._resolveReservation(reservationId, { client: true, service: true });
+    const reservation = await this.reservationService._resolveReservation(reservationId, {
+      client: true,
+      service: true,
+      status: true,
+    }, 'service');
     if (reservation.status !== ReservationStatus.Reserved) {
       throw new ReservationNotConfirmedException();
     }
     if (!userId.equals(reservation.client as ObjectID)) {
       throw new ReservationNotOwnedException();
     }
-    return reservation.service;
+    if (!(reservation.service as PlaceService).weddingWebsitesEnabled) {
+      throw new WeddingWebsitesDisabledException();
+    }
+    return (reservation.service as PlaceService)._id;
   }
 
   async validateWeddingWebsiteQuotaAvailable(userId: ObjectID) {

@@ -68,8 +68,8 @@ export class ReservationService {
     return doc;
   }
 
-  async _resolveReservation(id: ObjectID, projection = {}) {
-    return await this.reservationModel.findById(id, projection);
+  async _resolveReservation(id: ObjectID, projection = {}, population = '') {
+    return await this.reservationModel.findById(id, projection).populate(population);
   }
 
   async clientChangeReservationStatus(

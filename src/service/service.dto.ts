@@ -53,6 +53,8 @@ export class PlaceServiceEntity extends BaseServiceEntity {
   category?: PlaceCategory;
   @Field({ nullable: true })
   capacity?: number;
+  @Field()
+  weddingWebsitesEnabled: number;
 }
 
 @ObjectType()
@@ -106,6 +108,8 @@ export class CreatePlaceServiceInput {
   gallery?: string[];
   @Field({ nullable: true })
   capacity?: number;
+  @Field({ nullable: true })
+  weddingWebsitesEnabled?: number;
 }
 
 @InputType()
@@ -130,6 +134,8 @@ export class UpdatePlaceServiceInput {
   gallery?: UpdateGalleryInput;
   @Field({ nullable: true })
   capacity?: number;
+  @Field({ nullable: true })
+  weddingWebsitesEnabled?: number;
 }
 
 @InputType()
