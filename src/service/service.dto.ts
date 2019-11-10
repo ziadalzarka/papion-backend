@@ -109,7 +109,7 @@ export class CreatePlaceServiceInput {
   @Field({ nullable: true })
   capacity?: number;
   @Field({ nullable: true })
-  weddingWebsitesEnabled?: number;
+  weddingWebsitesEnabled?: boolean;
 }
 
 @InputType()
@@ -135,7 +135,7 @@ export class UpdatePlaceServiceInput {
   @Field({ nullable: true })
   capacity?: number;
   @Field({ nullable: true })
-  weddingWebsitesEnabled?: number;
+  weddingWebsitesEnabled?: boolean;
 }
 
 @InputType()
