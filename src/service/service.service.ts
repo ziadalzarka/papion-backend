@@ -13,6 +13,8 @@ import { SortKey } from './sort-key.dto';
 import { ServiceNotAvailableException } from './exceptions/service-not-available.exception';
 import { ServiceNotFoundException } from './exceptions/service-not-found.exception';
 import { ServiceNotOwnedException } from './exceptions/service-not-owned.exception';
+import { groundDate } from 'app/shared/date.util';
+import * as moment from 'moment';
 
 @Injectable()
 export class ServiceService {
@@ -24,10 +26,11 @@ export class ServiceService {
   ) { }
 
   async validateServicePublished(id: ObjectID) {
-    const doc = await this.serviceModel.findById(id, { published: 1 });
+    const doc = await this.serviceModel.findById(id, { published: true, acceptsMultiple: true });
     if (!doc || !doc.published) {
       throw new ServiceNotAvailableException();
     }
+    return doc;
   }
 
   async _resolveService(id: ObjectID, projection = {}) {
@@ -84,19 +87,36 @@ export class ServiceService {
     return new PlaceServiceEntity(doc);
   }
 
-  private generateSearhQuery(payload: SearchPayloadInput) {
+  private daysRange(fromDate: Date, toDate: Date) {
+    const start = groundDate(fromDate);
+    const end = groundDate(toDate);
+    const daysCount = moment(end).diff(start, 'day');
+    const days = [];
+    for (let i = 0; i <= daysCount; i++) {
+      days.push(moment(start).add(i, 'days').toDate());
+    }
+    return days;
+  }
+
+  private generateTimeRangeFilter(fromDate: Date, toDate: Date) {
+    const $or = this.daysRange(fromDate, toDate).map(date => ({ reservedDays: { $ne: new Date(date) } }));
+    return { $or };
+  }
+
+  private generateSearchQuery(payload: SearchPayloadInput) {
     return {
       ...payload.query && { name: new RegExp(`^${payload.query}`) },
-      ...payload.category && { category: payload.category },
-      ...payload.packagePriority && { packagePriority: payload.packagePriority },
       ...payload.country && { 'address.country': payload.country },
       ...payload.city && { 'address.city': payload.city },
+      ...payload.category && { category: payload.category },
+      ...payload.packagePriority && { packagePriority: payload.packagePriority },
       ...payload.priceRange && {
         $and: [
           { startingPrice: { $gte: payload.priceRange.startPrice } },
           { startingPrice: { $lte: payload.priceRange.endPrice } },
         ],
       },
+      ...payload.timeRange && this.generateTimeRangeFilter(payload.timeRange.startDate, payload.timeRange.endDate),
     };
   }
 
@@ -114,9 +134,17 @@ export class ServiceService {
   }
 
   async searchServices(payload: SearchPayloadInput, projection = {}): Promise<ResultsPage> {
-    const query = this.generateSearhQuery(payload);
+    const query = this.generateSearchQuery(payload);
     const sort = this.generateSortPayload(payload.orderBy, payload.sortKey);
     return await performPaginatableQuery(this.serviceModel, query, sort, payload.page, projection);
+  }
+
+  async reserveDay(id: ObjectID, day: Date) {
+    await this.serviceModel.findByIdAndUpdate(id, { $addToSet: { reservedDays: groundDate(day) } });
+  }
+
+  async cancelDay(id: ObjectID, day: Date) {
+    await this.serviceModel.findByIdAndUpdate(id, { $pull: { reservedDays: groundDate(day) } });
   }
 
 }

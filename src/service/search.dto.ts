@@ -19,6 +19,14 @@ export class PriceRangeInput {
 }
 
 @InputType()
+export class TimeRangeInput {
+  @Field(type => Date)
+  startDate: Date;
+  @Field(type => Date)
+  endDate: Date;
+}
+
+@InputType()
 export class SearchPayloadInput {
   @Field({ nullable: true })
   query?: string;
@@ -26,6 +34,8 @@ export class SearchPayloadInput {
   category?: ServiceCategory;
   @Field(type => PriceRangeInput, { nullable: true })
   priceRange?: PriceRangeInput;
+  @Field(type => TimeRangeInput, { nullable: true })
+  timeRange?: TimeRangeInput;
   @Field(type => [PackagePriority], { nullable: true })
   packagePriority?: PackagePriority;
   @Field(type => Country, { nullable: true })

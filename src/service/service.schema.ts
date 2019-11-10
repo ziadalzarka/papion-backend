@@ -45,6 +45,9 @@ export class IService {
   addedAt: Date;
   @field({ default: [] })
   gallery: string[];
+  @indexed
+  @field({ default: [] })
+  reservedDays: Date[];
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })

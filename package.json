@@ -41,6 +41,7 @@
     "graphql-tools": "^4.0.5",
     "graphql-upload": "^8.1.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mongoose": "^5.7.5",
     "mongoose-schema-decorators": "^1.1.3",
     "nest-mailer": "^1.2.4",

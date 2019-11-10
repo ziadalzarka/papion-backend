@@ -32,12 +32,15 @@ export class ReservationResolver {
     if (groundDate(new Date()) > payload.reservationDay) {
       throw new ReservationDayPassedException();
     }
-    await this.serviceService.validateServicePublished(payload.service);
-    await this.reservationService.validateRequestNotDuplicated({
-      reservationDay: payload.reservationDay,
-      service: payload.service,
-    });
-    return await this.reservationService.submitRequest({ ...payload, client: user._id });
+    const { acceptsMultiple } = await this.serviceService.validateServicePublished(payload.service);
+    if (!acceptsMultiple) {
+      await this.reservationService.validateRequestNotDuplicated({
+        reservationDay: payload.reservationDay,
+        service: payload.service,
+        status: ReservationStatus.Reserved,
+      });
+    }
+    return await this.reservationService.createReservation({ ...payload, client: user._id });
   }
 
   @Mutation(returns => ReservationEntity)
@@ -74,7 +77,11 @@ export class ReservationResolver {
 
   @ResolveProperty('client', type => ClientUserEntity)
   async client(@Parent() reservation: IReservation, @Info() info) {
-    return await this.userService._resolveUser(reservation.client as ObjectID, graphqlMongodbProjection(info));
+    if (reservation.client) {
+      return await this.userService._resolveUser(reservation.client as ObjectID, graphqlMongodbProjection(info));
+    } else {
+      return null;
+    }
   }
 
 }

@@ -2,10 +2,8 @@ import { Service } from 'app/service/service.schema';
 import { User } from 'app/user/user.schema';
 import { ObjectID } from 'mongodb';
 import * as mongoose from 'mongoose';
-import { buildSchema, field, schema, indexed } from 'mongoose-schema-decorators';
-import { ReservationStatus, ReservationResponse } from './reservation.dto';
-import { Schema } from 'mongoose';
-import { injectPopulationOnProjection } from '@gray/graphql-essentials';
+import { buildSchema, field, indexed, schema } from 'mongoose-schema-decorators';
+import { ReservationResponse, ReservationStatus } from './reservation.dto';
 
 @schema({})
 export class IReservation {
@@ -18,6 +16,7 @@ export class IReservation {
   reservationDay: Date;
   @field
   notes: string;
+  @indexed
   @field({ default: ReservationStatus.Pending })
   status: ReservationStatus;
   @indexed

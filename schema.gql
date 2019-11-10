@@ -173,6 +173,10 @@ type Mutation {
   submitRequest(payload: ReserveServiceInput!): ReservationEntity!
   clientRefuseReservation(id: ObjectID!): ReservationEntity!
   clientApproveReservation(id: ObjectID!): ReservationEntity!
+  personBusinessMarkCalendar(payload: ServiceMarkCalendarInput!): ReservationEntity!
+  personBusinessDeleteCalendarMark(id: ObjectID!): ReservationEntity!
+  placeBusinessMarkCalendar(payload: PlaceBusinessMarkCalendarInput!): ReservationEntity!
+  placeBusinessDeleteCalendarMark(id: ObjectID!): ReservationEntity!
   businessRespondToReservation(payload: RespondToReservationInput!): ReservationEntity!
   businessRefuseReservation(id: ObjectID!): ReservationEntity!
   businessConfirmReservation(id: ObjectID!): ReservationEntity!
@@ -231,13 +235,24 @@ input PlaceBusinessCalendarQueryInput {
   serviceId: ObjectID!
 }
 
+input PlaceBusinessMarkCalendarInput {
+  """
+  Pass an id if you want to edit a reservation. Passing no id would create a new reservation.
+  """
+  id: ObjectID
+  reservationDay: DateTime!
+  status: ReservationStatus!
+  notes: String!
+  serviceId: ObjectID!
+}
+
 type PlaceBusinessReservationEntity {
   _id: ID!
   service: PlaceServiceEntity!
   reservationDay: DateTime!
   notes: String!
   status: ReservationStatus!
-  client: ClientUserEntity!
+  client: ClientUserEntity
   response: ReservationResponse
 }
 
@@ -281,6 +296,7 @@ type Query {
   logIn(payload: LogInPayload!): AuthPayload!
   search(payload: SearchPayloadInput!): ServiceSearchOutput!
   searchMultiple(payload: MultipleSearchPayloadInput!): [ServiceSearchOutput!]!
+  service(id: ObjectID!): ServiceEntity!
   personBusiness: PersonServiceEntity!
   placeBusinesses: [PlaceServiceEntity!]!
   placeBusiness(id: ObjectID!): PlaceServiceEntity!
@@ -288,9 +304,9 @@ type Query {
   templates: [TemplateEntity!]!
   reservations(page: Float): ReservationsPage!
   packages: [PackageEntity!]!
-  placeBusinessReservations(page: Float!): PlaceBusinessReservationEntityPage!
-  placeBusinessCalendar(payload: PlaceBusinessCalendarQueryInput!): [ReservationEntity!]!
   personBusinessCalendar(payload: PersonBusinessCalendarQueryInput!): [ReservationEntity!]!
+  placeBusinessCalendar(payload: PlaceBusinessCalendarQueryInput!): [ReservationEntity!]!
+  placeBusinessReservations(page: Float!): PlaceBusinessReservationEntityPage!
 }
 
 type ReservationEntity {
@@ -299,7 +315,7 @@ type ReservationEntity {
   reservationDay: DateTime!
   notes: String!
   status: ReservationStatus!
-  client: ClientUserEntity!
+  client: ClientUserEntity
   response: ReservationResponse
 }
 
@@ -342,6 +358,7 @@ input SearchPayloadInput {
   query: String
   category: ServiceCategory
   priceRange: PriceRangeInput
+  timeRange: TimeRangeInput
   packagePriority: [PackagePriority!]
   country: Country
   city: City
@@ -364,6 +381,16 @@ enum ServiceCategory {
 }
 
 union ServiceEntity = PersonServiceEntity | PlaceServiceEntity
+
+input ServiceMarkCalendarInput {
+  """
+  Pass an id if you want to edit a reservation. Passing no id would create a new reservation.
+  """
+  id: ObjectID
+  reservationDay: DateTime!
+  status: ReservationStatus!
+  notes: String!
+}
 
 enum ServiceSearchOrderBy {
   Price
@@ -390,6 +417,11 @@ type TemplateEntity {
   name: String!
   preview_url: String!
   stylesheet_url: String!
+}
+
+input TimeRangeInput {
+  startDate: DateTime!
+  endDate: DateTime!
 }
 
 input UpdateAddressCoordinatesInput {

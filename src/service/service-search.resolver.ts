@@ -3,6 +3,8 @@ import { Args, Info, Query, Resolver } from '@nestjs/graphql';
 import { MultipleSearchPayloadInput, SearchPayloadInput, ServiceSearchOutput } from 'app/service/search.dto';
 import { ServiceService } from 'app/service/service.service';
 import { GraphQLResolveInfo } from 'graphql';
+import { ServiceEntity } from './service.dto';
+import { ObjectID } from 'mongodb';
 
 @Resolver()
 export class ServiceSearchResolver {
@@ -23,5 +25,10 @@ export class ServiceSearchResolver {
       results.push({ ...page, key: searchPayload.key });
     }
     return results;
+  }
+
+  @Query(returns => ServiceEntity)
+  async service(@Args({ name: 'id', type: () => ObjectID }) id: ObjectID, @Info() info) {
+    return await this.serviceService._resolveService(id, graphqlMongodbProjection(info));
   }
 }

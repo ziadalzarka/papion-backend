@@ -1,26 +1,28 @@
-import { ObjectID } from 'bson';
+import { performPaginatableQuery } from '@gray/graphql-essentials/paginatable';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Reservation, IReservation } from './reservation.schema';
-import { performPaginatableQuery } from '@gray/graphql-essentials/paginatable';
-import { ReservationDuplicatedException } from './exceptions/reservation-duplicated.exception';
-import { ReservationStatus } from './reservation.dto';
-import { GraphQLResolveInfo } from 'graphql';
-import { IService } from 'app/service/service.schema';
-import { ServiceNotOwnedException } from 'app/service/exceptions/service-not-owned.exception';
-import { InvalidReservationStatusTransitionException } from './exceptions/invalid-status-transition.exception';
-import { graphqlMongodbProjection } from '@gray/graphql-essentials';
-import { ReservationNotOwnedException } from './exceptions/reservation-not-owned.exception';
 import { BusinessCalendarQueryInput } from 'app/business-cpanel/business-reservation/business-reservation.dto';
+import { ServiceService } from 'app/service/service.service';
+import { ObjectID } from 'bson';
+import { Model } from 'mongoose';
+import { InvalidReservationStatusTransitionException } from './exceptions/invalid-status-transition.exception';
+import { ReservationDuplicatedException } from './exceptions/reservation-duplicated.exception';
+import { ReservationNotOwnedException } from './exceptions/reservation-not-owned.exception';
+import { ReservationStatus } from './reservation.dto';
+import { IReservation, Reservation } from './reservation.schema';
+import { Service } from 'app/service/service.schema';
+import { ServiceNotOwnedException } from 'app/service/exceptions/service-not-owned.exception';
+import { UserRequestsCannotBeDeletedException } from 'app/business-cpanel/business-reservation/exceptions/user-requests-cannot-be-deleted.exception';
 
 @Injectable()
 export class ReservationService {
 
-  constructor(@InjectModel('Reservation') private reservationModel: Model<Reservation>) { }
+  constructor(@InjectModel('Reservation') private reservationModel: Model<Reservation>, private serviceService: ServiceService) { }
 
-  async submitRequest(payload: Partial<IReservation>) {
-    return await new this.reservationModel(payload).save();
+  async createReservation(payload: Partial<IReservation>) {
+    const doc = await new this.reservationModel(payload).save();
+    await this.syncServiceReservedDays(payload.status, payload.service as ObjectID, payload.reservationDay);
+    return doc;
   }
 
   async validateRequestNotDuplicated(payload: Partial<IReservation>) {
@@ -28,6 +30,10 @@ export class ReservationService {
     if (exists) {
       throw new ReservationDuplicatedException();
     }
+  }
+
+  async findOne(payload: Partial<IReservation>, projection = {}) {
+    return await this.reservationModel.findOne(payload, projection);
   }
 
   async listReservations(userId: ObjectID, page, projection = {}) {
@@ -45,8 +51,21 @@ export class ReservationService {
     }).sort({ reservationDay: -1 });
   }
 
+  async syncServiceReservedDays(status: ReservationStatus, service: ObjectID, reservationDay: Date) {
+    if (status === ReservationStatus.Reserved) {
+      await this.serviceService.reserveDay(service as ObjectID, reservationDay);
+    } else if (status === ReservationStatus.Canceled) {
+      await this.serviceService.cancelDay(service as ObjectID, reservationDay);
+    }
+  }
+
   async updateReservation(id: ObjectID, payload: Partial<IReservation>, projection = {}) {
-    return await this.reservationModel.findByIdAndUpdate(id, payload, { select: projection, new: true });
+    if (payload.status) {
+      projection = { ...projection, service: true, reservationDay: true };
+    }
+    const doc = await this.reservationModel.findOneAndUpdate({ _id: id }, payload, { select: projection, new: true });
+    await this.syncServiceReservedDays(payload.status, doc.service as ObjectID, doc.reservationDay);
+    return doc;
   }
 
   async _resolveReservation(id: ObjectID, projection = {}) {
@@ -66,5 +85,16 @@ export class ReservationService {
       throw new InvalidReservationStatusTransitionException();
     }
     return await this.updateReservation(_id, payload, projection);
+  }
+
+  async unmarkServiceCalendarDay(id: ObjectID, userId: ObjectID, population = {}) {
+    const reservation = await this.reservationModel.findById(id).populate('service');
+    if (!userId.equals((reservation.service as Service).owner as ObjectID)) {
+      throw new ServiceNotOwnedException();
+    } else if (reservation.client) {
+      throw new UserRequestsCannotBeDeletedException();
+    }
+    await this.serviceService.cancelDay((reservation.service as Service)._id, reservation.reservationDay);
+    return await this.reservationModel.findByIdAndDelete(id, { select: population });
   }
 }

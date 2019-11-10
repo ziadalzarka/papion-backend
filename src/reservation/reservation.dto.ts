@@ -27,8 +27,8 @@ export class ReservationEntity extends DatabaseEntity {
   notes: string;
   @Field(type => ReservationStatus)
   status: ReservationStatus;
-  @Field(type => ClientUserEntity)
-  client: ClientUserEntity;
+  @Field(type => ClientUserEntity, { nullable: true })
+  client?: ClientUserEntity;
   @Field(type => ReservationResponse, { nullable: true })
   response?: ReservationResponse;
 }

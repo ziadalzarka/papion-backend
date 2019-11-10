@@ -40,3 +40,24 @@ export class PlaceBusinessCalendarQueryInput extends PersonBusinessCalendarQuery
 
 @InputType()
 export class BusinessCalendarQueryInput extends PlaceBusinessCalendarQueryInput { }
+
+@InputType()
+export class ServiceMarkCalendarInput {
+  @Field(type => ObjectID, {
+    nullable: true,
+    description: 'Pass an id if you want to edit a reservation. Passing no id would create a new reservation.',
+  })
+  id?: ObjectID;
+  @Field(type => Date)
+  reservationDay: Date;
+  @Field(type => ReservationStatus)
+  status: ReservationStatus;
+  @Field()
+  notes: string;
+}
+
+@InputType()
+export class PlaceBusinessMarkCalendarInput extends ServiceMarkCalendarInput {
+  @Field(type => ObjectID)
+  serviceId: ObjectID;
+}
