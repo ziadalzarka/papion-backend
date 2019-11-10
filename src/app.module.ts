@@ -12,6 +12,7 @@ import { PackageModule } from './package/package.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { BusinessCpanelModule } from './business-cpanel/business-cpanel.module';
 import * as mongoose from 'mongoose';
+import { NotificationModule } from './notification/notification.module';
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -45,6 +46,7 @@ mongoose.set('debug', true);
     PackageModule,
     ReservationModule,
     BusinessCpanelModule,
+    NotificationModule,
   ],
 })
 export class AppModule { }
