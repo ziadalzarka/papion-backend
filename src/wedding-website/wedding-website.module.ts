@@ -8,6 +8,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { TemplateModule } from 'app/template/template.module';
 import { ServiceModule } from 'app/service/service.module';
 import { ReservationModule } from 'app/reservation/reservation.module';
+import { NotificationModule } from 'app/notification/notification.module';
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { ReservationModule } from 'app/reservation/reservation.module';
     TemplateModule,
     ServiceModule,
     ReservationModule,
+    NotificationModule,
   ],
   providers: [WeddingWebsiteService, WeddingWebsiteResolver],
-  controllers: [],
+  exports: [WeddingWebsiteService],
 })
 export class WeddingWebsiteModule { }

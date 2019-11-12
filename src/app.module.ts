@@ -13,6 +13,7 @@ import { ReservationModule } from './reservation/reservation.module';
 import { BusinessCpanelModule } from './business-cpanel/business-cpanel.module';
 import * as mongoose from 'mongoose';
 import { NotificationModule } from './notification/notification.module';
+import { AuthGuard } from './user/auth.guard';
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -24,19 +25,28 @@ mongoose.set('debug', true);
   imports: [
     MongooseModule.forRoot(ConfigUtils.databaseUrl),
     GraphqlEssentialsModule,
-    GraphQLModule.forRoot({
-      autoSchemaFile: 'schema.gql',
-      debug: false,
-      playground: true,
-      path: '/',
-      installSubscriptionHandlers: true,
-      // expose the schema and docs for the developers
-      introspection: true,
-      context: ({ req }) => ({ req }),
-      uploads: {
-        maxFileSize: ConfigUtils.files.maximumSize,
-        maxFiles: 5,
-      },
+    GraphQLModule.forRootAsync({
+      imports: [UserModule],
+      useFactory: (authGuard: AuthGuard) => ({
+        autoSchemaFile: 'schema.gql',
+        debug: false,
+        playground: true,
+        path: '/',
+        installSubscriptionHandlers: true,
+        // expose the schema and docs for the developers
+        introspection: true,
+        context: ({ req, connection }) => ({ req: req, ...connection && { query: connection.context }, meta: {} }),
+        subscriptions: {
+          onConnect: (connectionParams: any) => {
+            const { token } = connectionParams;
+            return { token };
+          },
+        },
+        uploads: {
+          maxFileSize: ConfigUtils.files.maximumSize,
+          maxFiles: 100,
+        },
+      }),
     }),
     UserModule,
     WeddingWebsiteModule,

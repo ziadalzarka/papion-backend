@@ -132,7 +132,7 @@ input CreatePlaceServiceInput {
   category: PlaceCategory
   gallery: [File!]
   capacity: Float
-  weddingWebsitesEnabled: Float
+  weddingWebsitesEnabled: Boolean
 }
 
 type DatabaseEntity {
@@ -183,6 +183,22 @@ type Mutation {
   businessRefuseReservation(id: ObjectID!): ReservationEntity!
   businessConfirmReservation(id: ObjectID!): ReservationEntity!
   businessCancelReservation(id: ObjectID!): ReservationEntity!
+}
+
+union NotificationData = ReservationEntity | WeddingWebsiteEntity
+
+type NotificationEntity {
+  _id: ID!
+  notificationType: NotificationType!
+  data: NotificationData!
+  dataRef: ObjectID!
+  addedAt: DateTime!
+}
+
+enum NotificationType {
+  WeddingWebsiteCreated
+  BusinessRepliedToReservation
+  PapionUserSubmittedReservationRequest
 }
 
 """Mongo ObjectID scalar type"""
@@ -417,6 +433,10 @@ enum SortKey {
   Descending
 }
 
+type Subscription {
+  notificationReceived: NotificationEntity!
+}
+
 type TemplateEntity {
   _id: ID!
   name: String!
@@ -471,7 +491,7 @@ input UpdatePlaceServiceInput {
   category: PlaceCategory
   gallery: UpdateGalleryInput
   capacity: Float
-  weddingWebsitesEnabled: Float
+  weddingWebsitesEnabled: Boolean
 }
 
 input UpdatePlaceServicePayloadInput {

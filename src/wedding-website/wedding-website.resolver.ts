@@ -20,6 +20,8 @@ import { WeddingWebsiteService } from './wedding-website.service';
 import { IUser } from 'app/user';
 import { PlaceServiceEntity } from 'app/service/service.dto';
 import { ServiceService } from 'app/service/service.service';
+import { NotificationService } from 'app/notification/notification.service';
+import { NotificationType } from 'app/notification/notification-type.dto';
 
 @InputType()
 class FileUploadInput {
@@ -34,7 +36,8 @@ export class WeddingWebsiteResolver {
     private weddingWebsiteService: WeddingWebsiteService,
     private userService: UserService,
     private templateService: TemplateService,
-    private serviceService: ServiceService) { }
+    private serviceService: ServiceService,
+    private notificationService: NotificationService) { }
 
   @Mutation(returns => WeddingWebsiteEntity)
   @AuthScopes([AuthenticationScope.WeddingWebsites])
@@ -48,12 +51,18 @@ export class WeddingWebsiteResolver {
     await this.templateService.validateTemplateUsable(payload.templateId);
     await this.weddingWebsiteService.validateWeddingWebsiteAvailable(payload.subdomain);
     await this.weddingWebsiteService.registerWeddingWebsite(payload.subdomain);
-    return await this.weddingWebsiteService.createWeddingWebsite({
+    const doc = await this.weddingWebsiteService.createWeddingWebsite({
       ...payload,
       user: user._id,
       template: payload.templateId,
       venue: venueId,
     });
+    await this.notificationService.createNotification({
+      user: user._id,
+      dataRef: doc._id,
+      notificationType: NotificationType.WeddingWebsiteCreated,
+    });
+    return doc;
   }
 
   @ResolveProperty('user', type => UserEntity)

@@ -1,17 +1,20 @@
-import { ConfigUtils } from 'app/config/config.util';
 import { User } from 'app/user';
 import { ObjectID } from 'mongodb';
 import * as mongoose from 'mongoose';
 import { buildSchema, field, schema } from 'mongoose-schema-decorators';
-import { NotificationType } from './notification.dto';
+import { NotificationType } from './notification-type.dto';
 
-@schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
+@schema({})
 export class INotification {
   _id: ObjectID;
   @field
   notificationType: NotificationType;
   @field({ ref: 'User' })
   user: ObjectID | User;
+  @field
+  dataRef: ObjectID;
+  @field({ default: () => new Date() })
+  addedAt: Date;
 }
 
 export const NotificationSchema = buildSchema(INotification);

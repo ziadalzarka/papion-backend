@@ -85,4 +85,8 @@ export class WeddingWebsiteService {
     }
   }
 
+  async _resolveWeddingWebsite(id: ObjectID, projection = {}) {
+    return await this.weddingWebsiteModel.findById(id, projection);
+  }
+
 }
