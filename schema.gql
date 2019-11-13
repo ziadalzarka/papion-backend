@@ -172,6 +172,8 @@ type Mutation {
   updatePlaceBusiness(payload: UpdatePlaceServicePayloadInput!): PlaceServiceEntity!
   unpublishPlaceBusiness(id: ObjectID!): PlaceServiceEntity!
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
+  updateWeddingWebsite(payload: UpdateWeddingWebsitePayloadInput!): WeddingWebsiteEntity!
+  deleteWeddingWebsite(id: ObjectID!): WeddingWebsiteEntity!
   submitRequest(payload: ReserveServiceInput!): ReservationEntity!
   clientRefuseReservation(id: ObjectID!): ReservationEntity!
   clientApproveReservation(id: ObjectID!): ReservationEntity!
@@ -327,7 +329,10 @@ type Query {
   personBusiness: PersonServiceEntity!
   placeBusinesses: [PlaceServiceEntity!]!
   placeBusiness(id: ObjectID!): PlaceServiceEntity!
-  weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
+  weddingWebsite(
+    """Leave empty to get the current user wedding website"""
+    subdomain: String
+  ): WeddingWebsiteEntity
   templates: [TemplateEntity!]!
   reservations(page: Float): ReservationsPage!
   notifications(page: Float!): NotificationEntityPage!
@@ -505,6 +510,22 @@ input UpdatePlaceServiceInput {
 input UpdatePlaceServicePayloadInput {
   id: ObjectID!
   data: UpdatePlaceServiceInput!
+}
+
+input UpdateWeddingWebsiteDataInput {
+  coupleName: String
+  image: File
+  description: String
+}
+
+input UpdateWeddingWebsiteInput {
+  data: WeddingWebsiteDataInput!
+  templateId: ObjectID
+}
+
+input UpdateWeddingWebsitePayloadInput {
+  id: ObjectID!
+  data: UpdateWeddingWebsiteInput!
 }
 
 union UserEntity = BusinessUserEntity | ClientUserEntity

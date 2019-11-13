@@ -13,8 +13,12 @@ export class AuthGuard implements CanActivate {
 
   constructor(private authTokenService: AuthTokenService, private reflector: Reflector, private userService: UserService) { }
 
+  private isOptional(context: ExecutionContext) {
+    return this.reflector.get<boolean>('auth_optional', context.getHandler());
+  }
+
   private isUserResolveEnabled(context: ExecutionContext) {
-    return this.reflector.get<string[]>('resolve_user', context.getHandler()) ? true : false;
+    return this.reflector.get<boolean>('resolve_user', context.getHandler());
   }
 
   private getHanldlerScopes(context: ExecutionContext): AuthenticationScope[] {
@@ -23,7 +27,7 @@ export class AuthGuard implements CanActivate {
 
   private extractToken(ctx) {
     const { req, query } = ctx.getContext();
-    if (req) {
+    if (req && req.headers && req.headers.authorization) {
       return req.headers.authorization.slice('Bearer '.length);
     } else if (query) {
       return query.token;
@@ -37,19 +41,26 @@ export class AuthGuard implements CanActivate {
   ): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const token = this.extractToken(ctx);
+    const optional = this.isOptional(context);
     if (token) {
-      const { user } = await this.guard(token, this.getHanldlerScopes(context), this.isUserResolveEnabled(context));
+      const { user } = await this.guard(token, this.getHanldlerScopes(context), this.isUserResolveEnabled(context), optional);
       ctx.getContext().meta.user = user;
       return true;
     } else {
-      throw new UnauthorizedException();
+      if (!optional) {
+        throw new UnauthorizedException();
+      } else {
+        return true;
+      }
     }
   }
 
-  async guard(token: string, handlerScopes: AuthenticationScope[] = [], resolveUser = false) {
+  async guard(token: string, handlerScopes: AuthenticationScope[] = [], resolveUser = false, optional = false) {
     const decoded = this.authTokenService.validate(token);
     if (!decoded) {
-      throw new UnauthorizedException();
+      if (!optional) {
+        throw new UnauthorizedException();
+      }
     } else {
       let user = { _id: ObjectID.createFromHexString(decoded._id) };
       if (resolveUser) {

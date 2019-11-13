@@ -50,3 +50,29 @@ export class WeddingWebsiteInput {
   @Field(type => ObjectID)
   reservationId: ObjectID;
 }
+
+@InputType()
+export class UpdateWeddingWebsiteDataInput {
+  @Field({ nullable: true })
+  coupleName?: string;
+  @Field(type => File, { nullable: true })
+  image?: string;
+  @Field({ nullable: true })
+  description?: string;
+}
+
+@InputType()
+export class UpdateWeddingWebsiteInput {
+  @Field(type => WeddingWebsiteDataInput)
+  data: WeddingWebsiteDataInput;
+  @Field(type => ObjectID, { nullable: true })
+  templateId?: ObjectID;
+}
+
+@InputType()
+export class UpdateWeddingWebsitePayloadInput {
+  @Field()
+  id: ObjectID;
+  @Field(type => UpdateWeddingWebsiteInput)
+  data: UpdateWeddingWebsiteInput;
+}

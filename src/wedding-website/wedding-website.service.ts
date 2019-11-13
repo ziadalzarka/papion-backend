@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb';
 import { WeddingWebsiteExistsException } from './exceptions/wedding-website-exists.exception';
-import { WeddingWebsite } from './wedding-website.schema';
+import { WeddingWebsite, IWeddingWebsite } from './wedding-website.schema';
 import { Injectable, Inject } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigUtils } from 'app/config/config.util';
@@ -13,6 +13,8 @@ import { ReservationNotOwnedException } from 'app/reservation/exceptions/reserva
 import { WeddingWebsiteQuotaCompleteException } from './exceptions/wedding-website-quota-complete.exception';
 import { PlaceService } from 'app/service/service.schema';
 import { WeddingWebsitesDisabledException } from './exceptions/wedding-websites-disabled.exception';
+import { WeddingWebsiteNotOwnedException } from './exceptions/wedding-website-not-owned.exception';
+import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-website-does-not-exist.exception';
 
 @Injectable()
 export class WeddingWebsiteService {
@@ -39,6 +41,17 @@ export class WeddingWebsiteService {
     }
   }
 
+  async validateWeddingWebsiteOwned(id: ObjectID, userId: ObjectID) {
+    const doc = await this._resolveWeddingWebsite(id);
+    if (!doc) {
+      throw new WeddingWebsiteDoesNotExistException();
+    }
+    if (!userId.equals(doc.user as ObjectID)) {
+      throw new WeddingWebsiteNotOwnedException();
+    }
+    return doc;
+  }
+
   registerWeddingWebsite(subdomain: string) {
     return axios.post(`${this._host}/entries`, {
       hostname: `${subdomain}.papion.love`,
@@ -56,8 +69,8 @@ export class WeddingWebsiteService {
     return await new this.weddingWebsiteModel(payload).save();
   }
 
-  findBySubdomain(subdomain: string, projection = {}) {
-    return this.weddingWebsiteModel.findOne({ subdomain }, projection);
+  async findOne(query: Partial<IWeddingWebsite>, projection = {}) {
+    return await this.weddingWebsiteModel.findOne(query, projection);
   }
 
   async validateReservation(reservationId: ObjectID, userId: ObjectID) {
@@ -87,6 +100,14 @@ export class WeddingWebsiteService {
 
   async _resolveWeddingWebsite(id: ObjectID, projection = {}) {
     return await this.weddingWebsiteModel.findById(id, projection);
+  }
+
+  async deleteWeddingWebsite(id: ObjectID) {
+    return await this.weddingWebsiteModel.findByIdAndDelete(id);
+  }
+
+  async updateWeddingWebsite(id: ObjectID, payload: Partial<IWeddingWebsite>, projection = {}) {
+    return await this.weddingWebsiteModel.findByIdAndUpdate(id, payload, { new: true, select: projection });
   }
 
 }

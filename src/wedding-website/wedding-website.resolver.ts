@@ -1,3 +1,4 @@
+import { WeddingWebsiteNotOwnedException } from './exceptions/wedding-website-not-owned.exception';
 import { graphqlMongodbProjection } from '@gray/graphql-essentials';
 import { File, ProcessGraphQLUploadArgs } from '@gray/graphql-essentials';
 import { UseGuards, Logger } from '@nestjs/common';
@@ -14,7 +15,7 @@ import { UserService } from 'app/user/user.service';
 import { ObjectID } from 'mongodb';
 import { Field, InputType } from 'type-graphql';
 import { WeddingWebsiteDoesNotExistException } from './exceptions/wedding-website-does-not-exist.exception';
-import { WeddingWebsiteEntity, WeddingWebsiteInput } from './wedding-website.dto';
+import { WeddingWebsiteEntity, WeddingWebsiteInput, UpdateWeddingWebsiteInput, UpdateWeddingWebsitePayloadInput } from './wedding-website.dto';
 import { WeddingWebsite } from './wedding-website.schema';
 import { WeddingWebsiteService } from './wedding-website.service';
 import { IUser } from 'app/user';
@@ -22,6 +23,8 @@ import { PlaceServiceEntity } from 'app/service/service.dto';
 import { ServiceService } from 'app/service/service.service';
 import { NotificationService } from 'app/notification/notification.service';
 import { NotificationType } from 'app/notification/notification-type.dto';
+import { GraphQLResolveInfo } from 'graphql';
+import { AuthOptional } from 'app/user/auth-optional.decorator';
 
 @InputType()
 class FileUploadInput {
@@ -85,13 +88,48 @@ export class WeddingWebsiteResolver {
     return `http://${weddingWebsite.subdomain}.papion.love`;
   }
 
-  @Query(returns => WeddingWebsiteEntity)
-  async weddingWebsite(@Args({ name: 'subdomain', type: () => String }) subdomain: string, @Info() info) {
-    const doc = await this.weddingWebsiteService.findBySubdomain(subdomain, graphqlMongodbProjection(info));
+  @Query(returns => WeddingWebsiteEntity, { nullable: true })
+  @UseGuards(AuthGuard)
+  @AuthOptional()
+  async weddingWebsite(
+    @Args({
+      name: 'subdomain',
+      type: () => String,
+      nullable: true,
+      description: 'Leave empty to get the current user wedding website',
+    }) subdomain: string,
+    @Info() info: GraphQLResolveInfo,
+    @User() user: IUser,
+  ) {
+    if (!subdomain && !user) { return null; }
+    const doc = await this.weddingWebsiteService.findOne({
+      ...subdomain ? { subdomain } : { user: user._id },
+    }, graphqlMongodbProjection(info));
     if (!doc) {
       throw new WeddingWebsiteDoesNotExistException();
     }
     return doc;
+  }
+
+  @Mutation(returns => WeddingWebsiteEntity)
+  @UseGuards(AuthGuard)
+  async updateWeddingWebsite(
+    @User() user: IUser,
+    @Args({ name: 'payload', type: () => UpdateWeddingWebsitePayloadInput }) payload: UpdateWeddingWebsitePayloadInput,
+    @Info() info) {
+    await this.weddingWebsiteService.validateWeddingWebsiteOwned(payload.id, user._id);
+    if (payload.data.templateId) { await this.templateService.validateTemplateUsable(payload.data.templateId); }
+    return await this.weddingWebsiteService.updateWeddingWebsite(payload.id, {
+      ...payload.data,
+      ...payload.data.templateId && { template: payload.data.templateId },
+    }, graphqlMongodbProjection(info));
+  }
+
+  @Mutation(returns => WeddingWebsiteEntity)
+  @UseGuards(AuthGuard)
+  async deleteWeddingWebsite(@User() user: IUser, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
+    await this.weddingWebsiteService.validateWeddingWebsiteOwned(id, user._id);
+    return await this.weddingWebsiteService.deleteWeddingWebsite(id);
   }
 
 }
