@@ -1,6 +1,7 @@
 import * as config from 'config';
 import { ApplicationMetadata, TokenConfiguration, ReverseProxyConfiguration, DatabaseConfiguration, FileConfiguration } from './config.interface';
 import { S3Configuration } from '@gray/uploads/s3/s3.interface';
+import { EmailConfiguration } from '@gray/email/email.interface';
 
 export class ConfigUtils {
 
@@ -31,5 +32,9 @@ export class ConfigUtils {
 
   static get s3(): S3Configuration {
     return config.get('s3');
+  }
+
+  static get email(): EmailConfiguration {
+    return config.get('email');
   }
 }

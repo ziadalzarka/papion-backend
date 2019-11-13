@@ -30,6 +30,12 @@
       ],
       "@gray/uploads/*": [
         "libs/uploads/src/*"
+      ],
+      "@gray/email": [
+        "libs/email/src"
+      ],
+      "@gray/email/*": [
+        "libs/email/src/*"
       ]
     }
   },

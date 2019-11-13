@@ -1,3 +1,4 @@
+import { UserResetPasswordStore } from './reset.interface';
 import { ObjectID } from 'mongodb';
 import * as mongoose from 'mongoose';
 import { buildSchema, field, schema, unique } from 'mongoose-schema-decorators';
@@ -23,9 +24,13 @@ export class IUser {
   userType: UserType;
   @field
   businessCategory: BusinessCategory;
+  @field
+  reset: UserResetPasswordStore;
 }
 
 export const UserSchema = buildSchema(IUser);
+
+UserSchema.index({ 'reset.code': 1 });
 
 mongoose.model('User', UserSchema);
 

@@ -1,4 +1,5 @@
 import { S3Configuration } from '@gray/uploads/s3/s3.interface';
+import { EmailConfiguration } from '@gray/email/email.interface';
 
 export interface ApplicationMetadata {
   domain?: string;
@@ -6,6 +7,7 @@ export interface ApplicationMetadata {
   cookieMaxAge?: number;
   pageSize?: number;
   production?: boolean;
+  resetCodeExpiresAfter?: number;
 }
 
 export interface DatabaseConfiguration {
@@ -37,4 +39,5 @@ export interface ConfigurationSchema {
   reverseProxy?: ReverseProxyConfiguration;
   files?: FileConfiguration;
   s3?: S3Configuration;
+  email?: EmailConfiguration;
 }

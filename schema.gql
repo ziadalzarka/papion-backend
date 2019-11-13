@@ -162,6 +162,8 @@ input MultipleSearchPayloadInput {
 }
 
 type Mutation {
+  generatePasswordResetCode(email: String!): ResetPasswordUserSummary!
+  resetPassword(payload: ResetPasswordInput!): ResetPasswordUserSummary!
   signUpClientUser(payload: CreateClientUserInput!): ClientUserEntity!
   signUpBusinessUser(payload: CreateBusinessUserInput!): BusinessUserEntity!
   publishPersonBusiness: PersonServiceEntity!
@@ -323,6 +325,7 @@ input PriceRangeInput {
 type Query {
   me: UserEntity!
   logIn(payload: LogInPayload!): AuthPayload!
+  passwordResetCodeSummary(code: String!): ResetPasswordUserSummary!
   search(payload: SearchPayloadInput!): ServiceSearchOutput!
   searchMultiple(payload: MultipleSearchPayloadInput!): [ServiceSearchOutput!]!
   service(id: ObjectID!): ServiceEntity!
@@ -380,6 +383,16 @@ input ReserveServiceInput {
   reservationDay: DateTime!
   notes: String!
   service: ObjectID!
+}
+
+input ResetPasswordInput {
+  code: String!
+  password: String!
+}
+
+type ResetPasswordUserSummary {
+  name: String!
+  email: String!
 }
 
 input RespondToReservationInput {

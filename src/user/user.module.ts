@@ -6,9 +6,11 @@ import { UserResolver } from './user.resolver';
 import { AuthTokenService } from './auth-token.service';
 import { UserSchema } from '.';
 import { ServiceModule } from 'app/service/service.module';
+import { SharedModule } from 'app/shared/shared.module';
 
 @Module({
   imports: [
+    SharedModule,
     ServiceModule,
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],

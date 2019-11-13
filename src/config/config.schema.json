@@ -25,6 +25,9 @@
               },
               "s3": {
                   "$ref": "#/definitions/S3Configuration"
+              },
+              "email": {
+                  "$ref": "#/definitions/EmailConfiguration"
               }
           },
           "additionalProperties": false
@@ -46,6 +49,9 @@
               },
               "production": {
                   "type": "boolean"
+              },
+              "resetCodeExpiresAfter": {
+                  "type": "number"
               }
           },
           "additionalProperties": false
@@ -119,6 +125,31 @@
               "path": {
                   "type": "string"
               }
+          },
+          "additionalProperties": false
+      },
+      "EmailConfiguration": {
+          "type": "object",
+          "properties": {
+              "daemonName": {
+                  "type": "string"
+              },
+              "senderEmail": {
+                  "type": "string"
+              },
+              "host": {
+                  "type": "string"
+              },
+              "username": {
+                  "type": "string"
+              },
+              "password": {
+                  "type": "string"
+              },
+              "templatesDirectory": {
+                  "type": "string"
+              },
+              "context": {}
           },
           "additionalProperties": false
       }

@@ -5,7 +5,8 @@
     "port": 4000,
     "cookieMaxAge": 604800,
     "pageSize": 10,
-    "production": false
+    "production": false,
+    "resetCodeExpiresAfter": 604800
   },
   "database": {
     "host": "198.199.91.193",
@@ -30,5 +31,18 @@
     "endpoint": "https://sfo2.digitaloceanspaces.com",
     "bucket": "gray-space",
     "path": "papion"
+  },
+  "email": {
+    "context": {
+      "links": {
+        "reset-password": "https://papion.love/resetPassword?code="
+      }
+    },
+    "daemonName": "Papion",
+    "host": "smtp.mail.com",
+    "username": "themadprogrammer@mail.com",
+    "password": "loVeA6irl",
+    "senderEmail": "themadprogrammer@mail.com",
+    "templatesDirectory": "email-templates"
   }
 }
