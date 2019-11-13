@@ -1,9 +1,15 @@
+import { ResultsPage } from './../../libs/graphql-essentials/src/page.dto';
 import { DatabaseEntity } from '@gray/graphql-essentials';
 import { ReservationEntity } from 'app/reservation/reservation.dto';
 import { WeddingWebsiteEntity } from 'app/wedding-website/wedding-website.dto';
 import { createUnionType, Field, ObjectType } from 'type-graphql';
 import { NotificationType } from './notification-type.dto';
-import { ObjectID } from 'bson';
+import { ObjectID } from 'mongodb';
+
+export const RequiredNotificationProjection = {
+  reservationDay: true,
+  subdomain: true,
+};
 
 export const NotificationData = createUnionType({
   name: 'NotificationData',
@@ -27,4 +33,16 @@ export class NotificationEntity extends DatabaseEntity {
   dataRef: ObjectID;
   @Field(type => Date)
   addedAt: Date;
+  @Field()
+  seen: boolean;
+}
+
+@ObjectType()
+export class NotificationEntityPage implements ResultsPage {
+  @Field(type => [NotificationEntity])
+  edges: NotificationEntity[];
+  @Field()
+  pages: number;
+  @Field()
+  hasNext: boolean;
 }

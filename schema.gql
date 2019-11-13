@@ -175,6 +175,7 @@ type Mutation {
   submitRequest(payload: ReserveServiceInput!): ReservationEntity!
   clientRefuseReservation(id: ObjectID!): ReservationEntity!
   clientApproveReservation(id: ObjectID!): ReservationEntity!
+  markAsSeen(last: ObjectID!): Boolean!
   personBusinessMarkCalendar(payload: ServiceMarkCalendarInput!): ReservationEntity!
   personBusinessDeleteCalendarMark(id: ObjectID!): ReservationEntity!
   placeBusinessMarkCalendar(payload: PlaceBusinessMarkCalendarInput!): ReservationEntity!
@@ -193,12 +194,18 @@ type NotificationEntity {
   data: NotificationData!
   dataRef: ObjectID!
   addedAt: DateTime!
+  seen: Boolean!
+}
+
+type NotificationEntityPage {
+  edges: [NotificationEntity!]!
+  pages: Float!
+  hasNext: Boolean!
 }
 
 enum NotificationType {
   WeddingWebsiteCreated
   BusinessRepliedToReservation
-  PapionUserSubmittedReservationRequest
 }
 
 """Mongo ObjectID scalar type"""
@@ -323,6 +330,7 @@ type Query {
   weddingWebsite(subdomain: String!): WeddingWebsiteEntity!
   templates: [TemplateEntity!]!
   reservations(page: Float): ReservationsPage!
+  notifications(page: Float!): NotificationEntityPage!
   packages: [PackageEntity!]!
   personBusinessCalendar(payload: PersonBusinessCalendarQueryInput!): [ReservationEntity!]!
   placeBusinessCalendar(payload: PlaceBusinessCalendarQueryInput!): [ReservationEntity!]!

@@ -16,11 +16,13 @@ import { User } from 'app/user/user.decorator';
 import { ObjectID } from 'mongodb';
 import { RespondToReservationInput } from './business-reservation.dto';
 import { BusinessReservationService } from './business-reservation.service';
+import { NotificationService } from 'app/notification/notification.service';
+import { NotificationType } from 'app/notification/notification-type.dto';
 
 @Resolver('BusinessReservation')
 export class BusinessReservationResolver {
 
-  constructor(private businessReservationService: BusinessReservationService) { }
+  constructor(private businessReservationService: BusinessReservationService, private notificationService: NotificationService) { }
 
   @Query(returns => PlaceBusinessReservationEntityPage)
   @UseGuards(AuthGuard)
@@ -36,11 +38,17 @@ export class BusinessReservationResolver {
     @Args({ name: 'payload', type: () => RespondToReservationInput }) payload: RespondToReservationInput,
     @User() user: IUser,
     @Info() info) {
-    return await this.businessReservationService.businessChangeReservationStatus(user._id, ReservationStatus.Pending, {
+    const doc = await this.businessReservationService.businessChangeReservationStatus(user._id, ReservationStatus.Pending, {
       _id: payload.id,
       status: ReservationStatus.Responded,
       response: payload.data,
-    }, graphqlMongodbProjection(info));
+    }, { client: true, ...graphqlMongodbProjection(info) });
+    await this.notificationService.createNotification({
+      dataRef: doc._id,
+      notificationType: NotificationType.BusinessRepliedToReservation,
+      user: doc.client,
+    });
+    return doc;
   }
 
   @Mutation(returns => ReservationEntity)

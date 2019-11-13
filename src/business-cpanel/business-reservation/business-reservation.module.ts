@@ -7,9 +7,11 @@ import { ServiceModule } from 'app/service/service.module';
 import { UserModule } from 'app/user';
 import { BusinessReservationResolver } from './business-reservation.resolver';
 import { BusinessCalendarResolver } from 'app/business-cpanel/business-reservation/business-calendar.resolver';
+import { NotificationModule } from 'app/notification/notification.module';
 
 @Module({
   imports: [
+    NotificationModule,
     ReservationModule,
     ServiceModule,
     UserModule,

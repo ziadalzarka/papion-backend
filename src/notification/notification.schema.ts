@@ -15,6 +15,8 @@ export class INotification {
   dataRef: ObjectID;
   @field({ default: () => new Date() })
   addedAt: Date;
+  @field({ default: false })
+  seen: boolean;
 }
 
 export const NotificationSchema = buildSchema(INotification);
