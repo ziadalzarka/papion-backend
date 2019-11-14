@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private isUserResolveEnabled(context: ExecutionContext) {
-    return this.reflector.get<boolean>('resolve_user', context.getHandler());
+    return this.reflector.get<any>('resolve_user', context.getHandler());
   }
 
   private getHanldlerScopes(context: ExecutionContext): AuthenticationScope[] {
@@ -64,7 +64,7 @@ export class AuthGuard implements CanActivate {
     } else {
       let user = { _id: ObjectID.createFromHexString(decoded._id) };
       if (resolveUser) {
-        user = await this.userService._resolveUser(decoded._id);
+        user = await this.userService._resolveUser(decoded._id, resolveUser);
       }
       const scopes = decoded.scopes;
       const matchesScopes = handlerScopes.every(scope => scopes.includes(scope));

@@ -5,6 +5,7 @@ import { buildSchema, field, schema, unique } from 'mongoose-schema-decorators';
 import { Address } from './address.dto';
 import { BusinessCategory } from './business-category.dto';
 import { UserType } from './user-type.dto';
+import { ensureProjection } from 'app/shared/mongoose.util';
 
 @schema({})
 export class IUser {
@@ -16,6 +17,8 @@ export class IUser {
   email: string;
   @field
   password: string;
+  @field
+  profileImage: string;
   @field
   phone: string;
   @field
@@ -29,6 +32,9 @@ export class IUser {
 }
 
 export const UserSchema = buildSchema(IUser);
+
+// always include uesr type because it is needed for type resolving
+ensureProjection(UserSchema, { userType: true});
 
 UserSchema.index({ 'reset.code': 1 });
 

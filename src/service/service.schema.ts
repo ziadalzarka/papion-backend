@@ -7,6 +7,7 @@ import { ObjectID } from 'mongodb';
 import * as mongoose from 'mongoose';
 import { buildSchema, field, indexed, schema } from 'mongoose-schema-decorators';
 import { PersonCategory, PlaceCategory } from './category.dto';
+import { ensureProjection } from 'app/shared/mongoose.util';
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
 export class IService {
@@ -77,17 +78,8 @@ export const ServiceSchema = buildSchema(IService);
 export const PlaceServiceSchema = buildSchema(IPlaceService);
 export const PersonServiceSchema = buildSchema(IPersonService);
 
-function ensureBusinessCategory(next) {
-  if ((this as any)._fields && Object.keys((this as any)._fields).length > 0) {
-    this.select({ businessCategory: true });
-  }
-  next();
-}
-
 // always include business category because it is needed for type resolving
-ServiceSchema.pre('find', ensureBusinessCategory);
-ServiceSchema.pre('findOne', ensureBusinessCategory);
-ServiceSchema.pre('findOneAndUpdate', ensureBusinessCategory);
+ensureProjection(ServiceSchema, { businessCategory: true});
 
 ServiceSchema.index(ConfigUtils.database.discriminatorKey);
 ServiceSchema.index({ 'address.city': 1 });

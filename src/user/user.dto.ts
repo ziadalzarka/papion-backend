@@ -4,6 +4,7 @@ import { Field, Int, ObjectType, ID, InputType, ArgsType, createUnionType } from
 import { DatabaseEntity } from '@gray/graphql-essentials';
 import { Address, AddressInput } from './address.dto';
 import { UserType } from './user-type.dto';
+import { File } from '@gray/graphql-essentials';
 
 @ObjectType()
 export class BaseUserEntity<T> extends DatabaseEntity<T> {
@@ -13,6 +14,8 @@ export class BaseUserEntity<T> extends DatabaseEntity<T> {
   email: string;
   @Field({ nullable: true })
   phone?: string;
+  @Field({ nullable: true })
+  profileImage?: string;
   @Field(type => Address, { nullable: true })
   address?: Address;
   @Field(type => UserType)
@@ -69,4 +72,20 @@ export class CreateBusinessUserInput {
   address: AddressInput;
   @Field(type => BusinessCategory)
   businessCategory: BusinessCategory;
+}
+
+@InputType()
+export class UpdateUserProfileInput {
+  @Field({ nullable: true })
+  name?: string;
+  @Field(type => File, { nullable: true })
+  profileImage?: string;
+  @Field(type => AddressInput, { nullable: true })
+  address?: AddressInput;
+  @Field({ nullable: true })
+  password?: string;
+  @Field({ nullable: true })
+  email?: string;
+  @Field({ nullable: true })
+  oldPassword?: string;
 }

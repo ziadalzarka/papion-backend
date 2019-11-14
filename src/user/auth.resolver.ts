@@ -8,8 +8,6 @@ import { User } from './user.decorator';
 import { UserEntity } from './user.dto';
 import { UserService } from './user.service';
 import { ResetPasswordUserSummary, ResetPasswordInput } from './reset.dto';
-import { UserNotFoundException } from './exceptions/user-not-found.exception';
-import { UserResetCodeExpiredException } from './exceptions/user-reset-code-expired.exception';
 
 @Resolver()
 export class AuthResolver {

@@ -118,4 +118,11 @@ export class UserService {
       reset: null,
     });
   }
+
+  async updateUser(id: ObjectID, payload: Partial<IUser>, population = {}) {
+    return await this.userModel.findByIdAndUpdate(id, {
+      ...payload,
+      ...payload.password && { password: this.hashPassword(payload.password) },
+    }, { new: true, select: population });
+  }
 }
