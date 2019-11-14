@@ -180,7 +180,7 @@ type Mutation {
   createWeddingWebsite(payload: WeddingWebsiteInput!): WeddingWebsiteEntity!
   updateWeddingWebsite(payload: UpdateWeddingWebsitePayloadInput!): WeddingWebsiteEntity!
   deleteWeddingWebsite(id: ObjectID!): WeddingWebsiteEntity!
-  submitRequest(payload: ReserveServiceInput!): ReservationEntity!
+  submitReservationRequest(payload: ReserveServiceInput!): ReservationEntity!
   clientRefuseReservation(id: ObjectID!): ReservationEntity!
   clientApproveReservation(id: ObjectID!): ReservationEntity!
   markAsSeen(last: ObjectID!): Boolean!
@@ -346,7 +346,7 @@ type Query {
   packages: [PackageEntity!]!
   personBusinessCalendar(payload: PersonBusinessCalendarQueryInput!): [ReservationEntity!]!
   placeBusinessCalendar(payload: PlaceBusinessCalendarQueryInput!): [ReservationEntity!]!
-  placeBusinessReservations(page: Float!): PlaceBusinessReservationEntityPage!
+  businessReservations(page: Float!): ReservationsPage!
 }
 
 type ReservationEntity {
@@ -465,6 +465,7 @@ enum SortKey {
 
 type Subscription {
   notificationReceived: NotificationEntity!
+  reservationChanges(services: [ObjectID!]): ReservationEntity!
 }
 
 type TemplateEntity {

@@ -11,7 +11,7 @@ import { UserModule } from 'app/user';
 @Module({
   imports: [
     forwardRef(() => WeddingWebsiteModule),
-    ReservationModule,
+    forwardRef(() => ReservationModule),
     UserModule,
     MongooseModule.forFeature([{ name: 'Notification', schema: NotificationSchema }]),
   ],
@@ -19,6 +19,6 @@ import { UserModule } from 'app/user';
     provide: 'PUB_SUB',
     useValue: new PubSub(),
   }],
-  exports: [NotificationService],
+  exports: [NotificationService, 'PUB_SUB'],
 })
 export class NotificationModule { }

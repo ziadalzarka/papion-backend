@@ -28,7 +28,7 @@ export class PlaceBusinessReservationResolver {
 
   @ResolveProperty('reservations', type => ReservationsPage)
   @AuthScopes([AuthenticationScope.ManageReservations])
-  async resolvePersonBusinessReservations(
+  async resolvePlaceBusinessReservations(
     @Parent() placeService: IPlaceService,
     @Args({ name: 'page', type: () => Number }) page: number,
     @Info() info: GraphQLResolveInfo) {

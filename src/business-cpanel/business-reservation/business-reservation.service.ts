@@ -23,7 +23,7 @@ export class BusinessReservationService {
   }
 
   async listAllReservations(userId: ObjectID, page: number, projection = {}) {
-    return performPaginatableQuery(this.reservationModel, { owner: userId }, { _id: -1 }, page, projection);
+    return performPaginatableQuery(this.reservationModel, { businessOwner: userId }, { _id: -1 }, page, projection);
   }
 
   async businessChangeReservationStatus(

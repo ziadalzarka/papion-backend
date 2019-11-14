@@ -1,5 +1,5 @@
 import { performPaginatableQuery } from '@gray/graphql-essentials/paginatable';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BusinessCalendarQueryInput } from 'app/business-cpanel/business-reservation/business-reservation.dto';
 import { ServiceService } from 'app/service/service.service';
@@ -13,11 +13,15 @@ import { IReservation, Reservation } from './reservation.schema';
 import { Service } from 'app/service/service.schema';
 import { ServiceNotOwnedException } from 'app/service/exceptions/service-not-owned.exception';
 import { UserRequestsCannotBeDeletedException } from 'app/business-cpanel/business-reservation/exceptions/user-requests-cannot-be-deleted.exception';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class ReservationService {
 
-  constructor(@InjectModel('Reservation') private reservationModel: Model<Reservation>, private serviceService: ServiceService) { }
+  constructor(
+    @InjectModel('Reservation') private reservationModel: Model<Reservation>,
+    private serviceService: ServiceService,
+    @Inject('PUB_SUB') private pubSub: PubSub) { }
 
   async createReservation(payload: Partial<IReservation>) {
     const doc = await new this.reservationModel(payload).save();
@@ -60,7 +64,7 @@ export class ReservationService {
   }
 
   async updateReservation(id: ObjectID, payload: Partial<IReservation>, projection = {}) {
-    if (payload.status) {
+    if (payload.status && Object.keys(projection).length > 0) {
       projection = { ...projection, service: true, reservationDay: true };
     }
     const doc = await this.reservationModel.findOneAndUpdate({ _id: id }, payload, { select: projection, new: true });
@@ -96,5 +100,9 @@ export class ReservationService {
     }
     await this.serviceService.cancelDay((reservation.service as Service)._id, reservation.reservationDay);
     return await this.reservationModel.findByIdAndDelete(id, { select: population });
+  }
+
+  async notifyBusinessReservationChange(reservation: IReservation) {
+    this.pubSub.publish('reservationChanges', reservation);
   }
 }

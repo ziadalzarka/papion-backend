@@ -27,6 +27,8 @@ export class IReservation {
   addedAt: Date;
   @field
   response: ReservationResponse;
+  @field({ ref: 'User' })
+  businessOwner: User | ObjectID;
 }
 
 export const ReservationSchema = buildSchema(IReservation);

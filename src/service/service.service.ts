@@ -2,7 +2,7 @@ import { ResultsPage } from '@gray/graphql-essentials/page.dto';
 import { performPaginatableQuery } from '@gray/graphql-essentials/paginatable';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { IPersonService, IPlaceService, PersonService, PlaceService, Service } from 'app/service/service.schema';
+import { IPersonService, IPlaceService, PersonService, PlaceService, Service, IService } from 'app/service/service.schema';
 import { BusinessCategory } from 'app/user/business-category.dto';
 import { ObjectID } from 'mongodb';
 import { Model } from 'mongoose';
@@ -25,8 +25,8 @@ export class ServiceService {
     @InjectModel('Service') private serviceModel: Model<Service>,
   ) { }
 
-  async validateServicePublished(id: ObjectID) {
-    const doc = await this.serviceModel.findById(id, { published: true, acceptsMultiple: true });
+  async validateServicePublished(id: ObjectID, projection = {}) {
+    const doc = await this.serviceModel.findById(id, { ...projection, published: true, acceptsMultiple: true });
     if (!doc || !doc.published) {
       throw new ServiceNotAvailableException();
     }
@@ -150,6 +150,14 @@ export class ServiceService {
 
   async cancelDay(id: ObjectID, day: Date) {
     await this.serviceModel.findByIdAndUpdate(id, { $pull: { reservedDays: groundDate(day) } });
+  }
+
+  async find(query, projection = {}) {
+    return await this.serviceModel.find(query, projection);
+  }
+
+  async count(query) {
+    return await this.serviceModel.countDocuments(query);
   }
 
 }

@@ -27,12 +27,12 @@ export class ReservationResolver {
   @Mutation(returns => ReservationEntity)
   @UseGuards(AuthGuard)
   @AuthScopes([AuthenticationScope.Reserve])
-  async submitRequest(@User() user: IUser, @Args({ name: 'payload', type: () => ReserveServiceInput }) payload: ReserveServiceInput) {
+  async submitReservationRequest(@User() user: IUser, @Args({ name: 'payload', type: () => ReserveServiceInput }) payload: ReserveServiceInput) {
     payload.reservationDay = groundDate(payload.reservationDay);
     if (groundDate(new Date()) > payload.reservationDay) {
       throw new ReservationDayPassedException();
     }
-    const { acceptsMultiple } = await this.serviceService.validateServicePublished(payload.service);
+    const { acceptsMultiple, owner } = await this.serviceService.validateServicePublished(payload.service, { owner: true });
     if (!acceptsMultiple) {
       await this.reservationService.validateRequestNotDuplicated({
         reservationDay: payload.reservationDay,
@@ -40,27 +40,33 @@ export class ReservationResolver {
         status: ReservationStatus.Reserved,
       });
     }
-    return await this.reservationService.createReservation({ ...payload, client: user._id });
+    const doc = await this.reservationService.createReservation({ ...payload, client: user._id, businessOwner: owner });
+    await this.reservationService.notifyBusinessReservationChange(doc);
+    return doc;
   }
 
   @Mutation(returns => ReservationEntity)
   @UseGuards(AuthGuard)
   @AuthScopes([AuthenticationScope.Reserve])
   async clientRefuseReservation(@User() user: IUser, @Info() info, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
-    return await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
+    const doc = await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
       _id: id,
       status: ReservationStatus.ClientRefused,
-    }, graphqlMongodbProjection(info));
+    });
+    await this.reservationService.notifyBusinessReservationChange(doc);
+    return doc;
   }
 
   @Mutation(returns => ReservationEntity)
   @UseGuards(AuthGuard)
   @AuthScopes([AuthenticationScope.Reserve])
   async clientApproveReservation(@User() user: IUser, @Info() info, @Args({ name: 'id', type: () => ObjectID }) id: ObjectID) {
-    return await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
+    const doc = await this.reservationService.clientChangeReservationStatus(user._id, ReservationStatus.Responded, {
       _id: id,
       status: ReservationStatus.PendingConfirmation,
-    }, graphqlMongodbProjection(info));
+    });
+    await this.reservationService.notifyBusinessReservationChange(doc);
+    return doc;
   }
 
   @Query(returns => ReservationsPage)

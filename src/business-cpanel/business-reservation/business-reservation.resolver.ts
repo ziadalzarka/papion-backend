@@ -1,11 +1,12 @@
 import { graphqlMongodbProjection } from '@gray/graphql-essentials';
-import { UseGuards } from '@nestjs/common';
-import { Args, Info, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { UseGuards, Inject } from '@nestjs/common';
+import { Args, Info, Mutation, Resolver, Query, Subscription } from '@nestjs/graphql';
 import {
   ReservationEntity,
   ReservationStatus,
   PlaceBusinessReservationEntity,
   PlaceBusinessReservationEntityPage,
+  ReservationsPage,
 } from 'app/reservation/reservation.dto';
 import { ReservationService } from 'app/reservation/reservation.service';
 import { IUser } from 'app/user';
@@ -18,16 +19,24 @@ import { RespondToReservationInput } from './business-reservation.dto';
 import { BusinessReservationService } from './business-reservation.service';
 import { NotificationService } from 'app/notification/notification.service';
 import { NotificationType } from 'app/notification/notification-type.dto';
+import { PubSub, withFilter } from 'graphql-subscriptions';
+import { ServiceService } from 'app/service/service.service';
+import { ServiceNotOwnedException } from 'app/service/exceptions/service-not-owned.exception';
+import { IReservation } from 'app/reservation/reservation.schema';
 
 @Resolver('BusinessReservation')
 export class BusinessReservationResolver {
 
-  constructor(private businessReservationService: BusinessReservationService, private notificationService: NotificationService) { }
+  constructor(
+    private serviceService: ServiceService,
+    private businessReservationService: BusinessReservationService,
+    private notificationService: NotificationService,
+    @Inject('PUB_SUB') private pubSub: PubSub) { }
 
-  @Query(returns => PlaceBusinessReservationEntityPage)
+  @Query(returns => ReservationsPage)
   @UseGuards(AuthGuard)
-  @AuthScopes([AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPlaceBusiness])
-  async placeBusinessReservations(@User() user: IUser, @Args({ name: 'page', type: () => Number }) page: number, @Info() info) {
+  @AuthScopes([AuthenticationScope.ManageReservations])
+  async businessReservations(@User() user: IUser, @Args({ name: 'page', type: () => Number }) page: number, @Info() info) {
     return await this.businessReservationService.listAllReservations(user._id, page, graphqlMongodbProjection(info));
   }
 
@@ -88,6 +97,30 @@ export class BusinessReservationResolver {
       _id,
       status: ReservationStatus.Reserved,
     }, graphqlMongodbProjection(info));
+  }
+
+  @Subscription(returns => ReservationEntity, {
+    resolve: data => data,
+  })
+  @UseGuards(AuthGuard)
+  async reservationChanges(
+    @User() user: IUser,
+    @Args({ name: 'services', type: () => [ObjectID], nullable: true }) services?: ObjectID[]) {
+    let filterIds = [];
+    if (services) {
+      const count = await this.serviceService.count({ _id: { $in: services } });
+      if (count !== services.length) {
+        throw new ServiceNotOwnedException();
+      }
+      filterIds = services.map(serviceId => serviceId.toHexString());
+    } else {
+      const ownedServices = await this.serviceService.find({ owner: user._id }, { _id: true });
+      filterIds = ownedServices.map(service => service._id.toHexString());
+    }
+    return withFilter(
+      () => this.pubSub.asyncIterator('reservationChanges'),
+      (payload: IReservation) => filterIds.includes((payload.service as ObjectID).toHexString()),
+    )();
   }
 
 }
