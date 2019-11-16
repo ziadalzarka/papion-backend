@@ -8,6 +8,7 @@ import * as mongoose from 'mongoose';
 import { buildSchema, field, indexed, schema } from 'mongoose-schema-decorators';
 import { PersonCategory, PlaceCategory } from './category.dto';
 import { ensureProjection } from 'app/shared/mongoose.util';
+import { ServiceStatistics } from './service-statistics.interface';
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
 export class IService {
@@ -51,6 +52,8 @@ export class IService {
   reservedDays: Date[];
   @field
   popularity: number;
+  @field
+  statistics: ServiceStatistics;
 }
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })

@@ -40,7 +40,7 @@ export class PlaceBusinessReservationEntity extends ReservationEntity {
 }
 
 @ObjectType()
-export class PlaceBusinessReservationEntityPage implements ResultsPage {
+export class PlaceBusinessReservationEntityPage extends ResultsPage {
   @Field(type => [PlaceBusinessReservationEntity])
   edges: PlaceBusinessReservationEntity[];
   @Field()
@@ -73,7 +73,7 @@ export class ReserveServiceInput {
 }
 
 @ObjectType()
-export class ReservationsPage implements ResultsPage<typeof ReservationEntity> {
+export class ReservationsPage extends ResultsPage<typeof ReservationEntity> {
   @Field(type => [ReservationEntity])
   edges: Array<typeof ReservationEntity>;
   @Field()

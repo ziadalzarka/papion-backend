@@ -1,0 +1,23 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Review, IReview } from './review.schema';
+import { ObjectID } from 'bson';
+import { performPaginatableQuery } from '@gray/graphql-essentials/paginatable';
+
+@Injectable()
+export class ReviewService {
+  constructor(@InjectModel('Review') private reviewModel: Model<Review>) { }
+
+  async createReview(payload: Partial<IReview>) {
+    return await new this.reviewModel(payload).save();
+  }
+
+  async validateReviewExists(_id: ObjectID) {
+    return await this.reviewModel.exists({ _id });
+  }
+
+  async listReviews(query: Partial<IReview>, page: number, projection = {}) {
+    return await performPaginatableQuery(this.reviewModel, query, { rating: -1 }, page, projection);
+  }
+}

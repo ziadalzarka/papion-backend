@@ -38,7 +38,7 @@ export class NotificationEntity extends DatabaseEntity {
 }
 
 @ObjectType()
-export class NotificationEntityPage implements ResultsPage {
+export class NotificationEntityPage extends ResultsPage {
   @Field(type => [NotificationEntity])
   edges: NotificationEntity[];
   @Field()

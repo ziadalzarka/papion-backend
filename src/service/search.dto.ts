@@ -69,7 +69,7 @@ export class MultipleSearchPayloadInput {
 }
 
 @ObjectType()
-export class ServiceSearchOutput implements ResultsPage<typeof ServiceEntity> {
+export class ServiceSearchOutput extends ResultsPage<typeof ServiceEntity> {
   @Field({ nullable: true })
   key?: string;
   @Field(type => [ServiceEntity])

@@ -9,14 +9,15 @@ const performPaginatableFind = async (model, query, sort, page = 1, projection =
 };
 
 const countPages = async (model, query) => {
-  const count = await model.countDocuments(query).exec();
-  const division = count / ConfigUtils.metadata.pageSize;
+  const total = await model.countDocuments(query).exec();
+  const division = total / ConfigUtils.metadata.pageSize;
   const floored = Math.floor(division);
-  return floored === division ? floored : floored + 1;
+  const pages = floored === division ? floored : floored + 1;
+  return { total, pages };
 };
 
 export const performPaginatableQuery = async (model, query, sort, page, projection = {}) => {
   const edges = await performPaginatableFind(model, query, sort, page, projection);
-  const pages = await countPages(model, query);
-  return { edges, pages, hasNext: pages > page };
+  const stats = await countPages(model, query);
+  return { edges, ...stats, hasNext: stats.pages > page };
 };

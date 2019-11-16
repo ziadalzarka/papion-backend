@@ -8,6 +8,7 @@ import { IsNotEmpty } from 'class-validator';
 import { ObjectID } from 'mongodb';
 import { createUnionType, Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
 import { PersonCategory, PlaceCategory } from './category.dto';
+import { ReviewEntityPage } from 'app/review/review.dto';
 
 // Validation decorators are here to validate the required fields internally
 // before publishing but they are not used by NestJS ValidationPipe!
@@ -41,6 +42,8 @@ export class BaseServiceEntity extends DatabaseEntity {
   gallery: string[];
   @Field(type => ReservationsPage)
   reservations: ReservationsPage;
+  @Field(type => ReviewEntityPage)
+  reviews: ReviewEntityPage;
 }
 
 @ObjectType()
