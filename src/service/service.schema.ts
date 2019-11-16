@@ -8,7 +8,7 @@ import * as mongoose from 'mongoose';
 import { buildSchema, field, indexed, schema } from 'mongoose-schema-decorators';
 import { PersonCategory, PlaceCategory } from './category.dto';
 import { ensureProjection } from 'app/shared/mongoose.util';
-import { ServiceStatistics } from './service-statistics.interface';
+import { ServiceStatistics } from 'app/service/service-statistics.dto';
 
 @schema({ discriminatorKey: ConfigUtils.database.discriminatorKey })
 export class IService {
@@ -52,7 +52,14 @@ export class IService {
   reservedDays: Date[];
   @field
   popularity: number;
-  @field
+  @field({
+    default: {
+      searchHits: 0,
+      pageHits: 0,
+      onGoingRequests: 0,
+      reservations: 0,
+    },
+  })
   statistics: ServiceStatistics;
 }
 
@@ -82,7 +89,7 @@ export const PlaceServiceSchema = buildSchema(IPlaceService);
 export const PersonServiceSchema = buildSchema(IPersonService);
 
 // always include business category because it is needed for type resolving
-ensureProjection(ServiceSchema, { businessCategory: true});
+ensureProjection(ServiceSchema, { businessCategory: true });
 
 ServiceSchema.index(ConfigUtils.database.discriminatorKey);
 ServiceSchema.index({ 'address.city': 1 });

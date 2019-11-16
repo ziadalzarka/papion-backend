@@ -141,15 +141,25 @@ export class ServiceService {
   async searchServices(payload: SearchPayloadInput, projection = {}): Promise<ResultsPage> {
     const query = this.generateSearchQuery(payload);
     const sort = this.generateSortPayload(payload.orderBy, payload.sortKey);
-    return await performPaginatableQuery(this.serviceModel, query, sort, payload.page, projection);
+    const result = await performPaginatableQuery(this.serviceModel, query, sort, payload.page, projection);
+    const ids = result.edges.map(edge => edge._id);
+    await this.recordSearchHits(ids);
+    return result;
   }
 
   async reserveDay(id: ObjectID, day: Date) {
-    await this.serviceModel.findByIdAndUpdate(id, { $addToSet: { reservedDays: groundDate(day) } });
+    await this.serviceModel.findByIdAndUpdate(id, {
+      $addToSet: {
+        reservedDays: groundDate(day),
+      }, $inc: {
+        'statistics.onGoingRequests': -1,
+        'statistics.reservations': 1,
+      },
+    });
   }
 
   async cancelDay(id: ObjectID, day: Date) {
-    await this.serviceModel.findByIdAndUpdate(id, { $pull: { reservedDays: groundDate(day) } });
+    await this.serviceModel.findByIdAndUpdate(id, { $pull: { reservedDays: groundDate(day) }, $inc: { 'statistics.reservations': -1 } });
   }
 
   async find(query, projection = {}) {
@@ -158,6 +168,26 @@ export class ServiceService {
 
   async count(query) {
     return await this.serviceModel.countDocuments(query);
+  }
+
+  private async recordStat(ids: ObjectID[], key: string, count = 1) {
+    await this.serviceModel.updateMany({ _id: { $in: ids } }, { $inc: { [`statistics.${key}`]: count } });
+  }
+
+  async recordPageHit(_id: ObjectID, count = 1) {
+    await this.recordStat([_id], 'pageHits', count);
+  }
+
+  async recordSearchHits(ids: ObjectID[], count = 1) {
+    await this.recordStat(ids, 'searchHits', count);
+  }
+
+  async recordOnGoingRequest(_id: ObjectID, count = 1) {
+    await this.recordStat([_id], 'onGoingRequests', count);
+  }
+
+  async recordReservation(_id: ObjectID, count = 1) {
+    await this.recordStat([_id], 'reservations', count);
   }
 
 }

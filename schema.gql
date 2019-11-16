@@ -42,6 +42,7 @@ type BaseServiceEntity {
   gallery: [String!]!
   reservations: ReservationsPage!
   reviews: ReviewEntityPage!
+  statistics: ServiceStatistics!
 }
 
 type BaseUserEntity {
@@ -277,6 +278,7 @@ type PersonServiceEntity {
   gallery: [String!]!
   reservations(page: Float!): ReservationsPage!
   reviews(page: Float!): ReviewEntityPage!
+  statistics: ServiceStatistics!
   image: String
   category: PersonCategory
 }
@@ -337,6 +339,7 @@ type PlaceServiceEntity {
   gallery: [String!]!
   reservations(page: Float!): ReservationsPage!
   reviews(page: Float!): ReviewEntityPage!
+  statistics: ServiceStatistics!
   coverImage: String
   category: PlaceCategory
   capacity: Float
@@ -515,6 +518,13 @@ type ServiceSearchOutput {
   total: Float!
   key: String
   edges: [ServiceEntity!]!
+}
+
+type ServiceStatistics {
+  searchHits: Float!
+  pageHits: Float!
+  onGoingRequests: Float!
+  reservations: Float!
 }
 
 enum SortKey {

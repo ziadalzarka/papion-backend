@@ -95,7 +95,7 @@ export class BusinessReservationResolver {
     @Info() info) {
     return await this.businessReservationService.businessChangeReservationStatus(user._id, ReservationStatus.Reserved, {
       _id,
-      status: ReservationStatus.Reserved,
+      status: ReservationStatus.Canceled,
     }, graphqlMongodbProjection(info));
   }
 

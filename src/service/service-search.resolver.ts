@@ -29,6 +29,7 @@ export class ServiceSearchResolver {
 
   @Query(returns => ServiceEntity)
   async service(@Args({ name: 'id', type: () => ObjectID }) id: ObjectID, @Info() info) {
+    await this.serviceService.recordPageHit(id);
     return await this.serviceService._resolveService(id, graphqlMongodbProjection(info));
   }
 }

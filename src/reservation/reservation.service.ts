@@ -25,7 +25,7 @@ export class ReservationService {
 
   async createReservation(payload: Partial<IReservation>) {
     const doc = await new this.reservationModel(payload).save();
-    await this.syncServiceReservedDays(payload.status, payload.service as ObjectID, payload.reservationDay);
+    await this.syncServiceReservedDays(doc.status, payload.service as ObjectID, payload.reservationDay);
     return doc;
   }
 
@@ -56,10 +56,24 @@ export class ReservationService {
   }
 
   async syncServiceReservedDays(status: ReservationStatus, service: ObjectID, reservationDay: Date) {
-    if (status === ReservationStatus.Reserved) {
-      await this.serviceService.reserveDay(service as ObjectID, reservationDay);
-    } else if (status === ReservationStatus.Canceled) {
-      await this.serviceService.cancelDay(service as ObjectID, reservationDay);
+    console.log({ status, service, reservationDay });
+    switch (status) {
+      // Already set as onGoing from Pending
+      // case ReservationStatus.PendingConfirmation:
+      // case ReservationStatus.Responded:
+      // case ReservationStatus.PendingConfirmation:
+      case ReservationStatus.Pending:
+        return await this.serviceService.recordOnGoingRequest(service, 1);
+      case ReservationStatus.BusinessRefused:
+      case ReservationStatus.ClientRefused:
+      case ReservationStatus.LeftUnconfirmed:
+        return await this.serviceService.recordOnGoingRequest(service, -1);
+      case ReservationStatus.Reserved:
+        // moves it from onGonig to reservations stats
+        return await this.serviceService.reserveDay(service as ObjectID, reservationDay);
+      case ReservationStatus.Canceled:
+        // decreases reservations stats
+        return await this.serviceService.cancelDay(service as ObjectID, reservationDay);
     }
   }
 
