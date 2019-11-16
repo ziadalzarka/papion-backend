@@ -205,7 +205,11 @@ type Mutation {
   businessConfirmReservation(id: ObjectID!): ReservationEntity!
   businessCancelReservation(id: ObjectID!): ReservationEntity!
   postReview(payload: CreateReviewInput!): ReviewEntity!
+  updateReview(payload: UpdateReviewPayloadInput!): ReviewEntity!
+  deleteReview(id: ObjectID!): ReviewEntity!
   postReviewComment(payload: CreateReviewCommentInput!): ReviewCommentEntity!
+  updateReviewComment(payload: UpdateReviewCommentPayloadInput!): ReviewCommentEntity!
+  deleteReviewComment(id: ObjectID!): ReviewCommentEntity!
 }
 
 union NotificationData = ReservationEntity | WeddingWebsiteEntity
@@ -583,6 +587,25 @@ input UpdatePlaceServiceInput {
 input UpdatePlaceServicePayloadInput {
   id: ObjectID!
   data: UpdatePlaceServiceInput!
+}
+
+input UpdateReviewCommentInput {
+  body: String!
+}
+
+input UpdateReviewCommentPayloadInput {
+  id: ObjectID!
+  data: UpdateReviewCommentInput!
+}
+
+input UpdateReviewInput {
+  body: String
+  rating: Float
+}
+
+input UpdateReviewPayloadInput {
+  id: ObjectID!
+  data: UpdateReviewInput!
 }
 
 input UpdateUserProfileInput {

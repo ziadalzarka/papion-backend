@@ -8,6 +8,7 @@ import { ServiceModule } from 'app/service/service.module';
 import { ReviewCommentService } from './review-comment.service';
 import { PersonBusinessReviewResolver } from './person-business-review.resolver';
 import { PlaceBusinessReviewResolver } from './place-business-review.resolver';
+import { ReviewCommentResolver } from './review-comment.resolver';
 import { UserModule } from 'app/user';
 
 @Module({
@@ -25,6 +26,7 @@ import { UserModule } from 'app/user';
     ReviewResolver,
     PersonBusinessReviewResolver,
     PlaceBusinessReviewResolver,
+    ReviewCommentResolver,
   ],
 })
 export class ReviewModule { }

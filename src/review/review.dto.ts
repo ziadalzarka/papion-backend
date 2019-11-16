@@ -43,3 +43,22 @@ export class ReviewEntityPage extends ResultsPage<ReviewEntity> {
   @Field()
   hasNext: boolean;
 }
+
+@InputType()
+export class UpdateReviewInput {
+  @Field({ nullable: true })
+  body?: string;
+  @Min(1)
+  @Max(5)
+  @IsNumber()
+  @Field({ nullable: true })
+  rating?: number;
+}
+
+@InputType()
+export class UpdateReviewPayloadInput {
+  @Field(type => ObjectID)
+  id: ObjectID;
+  @Field(type => UpdateReviewInput)
+  data: UpdateReviewInput;
+}

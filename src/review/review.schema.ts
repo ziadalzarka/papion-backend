@@ -6,11 +6,13 @@ import { Service } from 'app/service/service.schema';
 
 @schema({})
 export class IReview {
+  _id: ObjectID;
   @field
   body: string;
   @indexed
   @field
   rating: number;
+  @indexed
   @field({ ref: 'User' })
   user: User | ObjectID;
   @indexed

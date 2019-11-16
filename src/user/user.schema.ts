@@ -34,7 +34,7 @@ export class IUser {
 export const UserSchema = buildSchema(IUser);
 
 // always include uesr type because it is needed for type resolving
-ensureProjection(UserSchema, { userType: true});
+ensureProjection(UserSchema, { userType: true });
 
 UserSchema.index({ 'reset.code': 1 });
 

@@ -30,3 +30,17 @@ export class ReviewCommentEntityPage extends ResultsPage<ReviewCommentEntity> {
   @Field()
   hasNext: boolean;
 }
+
+@InputType()
+export class UpdateReviewCommentInput {
+  @Field()
+  body: string;
+}
+
+@InputType()
+export class UpdateReviewCommentPayloadInput {
+  @Field(type => ObjectID)
+  id: ObjectID;
+  @Field(type => UpdateReviewCommentInput)
+  data: UpdateReviewCommentInput;
+}

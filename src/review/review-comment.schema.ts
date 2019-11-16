@@ -6,6 +6,7 @@ import { Review } from './review.schema';
 
 @schema({})
 export class IReviewComment {
+  _id: ObjectID;
   @field
   body: string;
   @field({ ref: 'User' })
