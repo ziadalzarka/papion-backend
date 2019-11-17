@@ -23,6 +23,9 @@ export class BaseUserEntity<T> extends DatabaseEntity<T> {
 }
 
 @ObjectType()
+export class AdminUserEntity extends BaseUserEntity<ClientUserEntity> { }
+
+@ObjectType()
 export class ClientUserEntity extends BaseUserEntity<ClientUserEntity> { }
 
 @ObjectType()
@@ -33,13 +36,15 @@ export class BusinessUserEntity extends BaseUserEntity<BusinessUserEntity> {
 
 export const UserEntity = createUnionType({
   name: 'UserEntity',
-  types: [BusinessUserEntity, ClientUserEntity],
+  types: [BusinessUserEntity, ClientUserEntity, AdminUserEntity],
   resolveType: entity => {
     switch (entity.userType) {
       case UserType.Business:
         return 'BusinessUserEntity';
       case UserType.Client:
         return 'ClientUserEntity';
+      case UserType.Admin:
+        return 'AdminUserEntity';
     }
   },
 });

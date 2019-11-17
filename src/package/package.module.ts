@@ -11,5 +11,6 @@ import { UserModule } from 'app/user';
     MongooseModule.forFeature([{ name: 'Package', schema: PackageSchema }]),
   ],
   providers: [PackageService, PackageResolver],
+  exports: [MongooseModule],
 })
 export class PackageModule { }

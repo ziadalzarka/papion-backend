@@ -14,6 +14,7 @@ import { BusinessCpanelModule } from './business-cpanel/business-cpanel.module';
 import { NotificationModule } from './notification/notification.module';
 import { AuthGuard } from './user/auth.guard';
 import { ReviewModule } from './review/review.module';
+import { AdminModule } from './admin/admin.module';
 import * as mongoose from 'mongoose';
 
 mongoose.set('useNewUrlParser', true);
@@ -59,6 +60,7 @@ mongoose.set('debug', true);
     BusinessCpanelModule,
     NotificationModule,
     ReviewModule,
+    AdminModule,
   ],
 })
 export class AppModule { }

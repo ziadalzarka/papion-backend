@@ -46,14 +46,18 @@ export class UserService {
   }
 
   private userToAuthenticationScopes(entity: User) {
-    if (entity.userType === UserType.Business) {
-      if (entity.businessCategory === BusinessCategory.Person) {
-        return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPersonBusiness];
-      } else {
-        return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPlaceBusiness];
-      }
-    } else {
-      return [AuthenticationScope.WeddingWebsites, AuthenticationScope.Reserve];
+    switch (entity.userType) {
+      case UserType.Business:
+        switch (entity.businessCategory) {
+          case BusinessCategory.Person:
+            return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPersonBusiness];
+          case BusinessCategory.Place:
+            return [AuthenticationScope.ManageReservations, AuthenticationScope.RegisterPlaceBusiness];
+        }
+      case UserType.Client:
+        return [AuthenticationScope.WeddingWebsites, AuthenticationScope.Reserve];
+      case UserType.Admin:
+        return [AuthenticationScope.AdminPackages];
     }
   }
 

@@ -22,6 +22,16 @@ input AddressInput {
   coords: AddressCoordinatesInput
 }
 
+type AdminUserEntity {
+  _id: ID!
+  name: String!
+  email: String!
+  phone: String
+  profileImage: String
+  address: Address
+  userType: UserType!
+}
+
 type AuthPayload {
   token: String!
   user: UserEntity!
@@ -128,6 +138,13 @@ input CreateClientUserInput {
   address: AddressInput!
 }
 
+input CreatePackageInput {
+  name: String!
+  priority: PackagePriority!
+  price: Float!
+  description: String!
+}
+
 input CreatePlaceServiceInput {
   name: String!
   address: AddressInput!
@@ -212,6 +229,9 @@ type Mutation {
   postReviewComment(payload: CreateReviewCommentInput!): ReviewCommentEntity!
   updateReviewComment(payload: UpdateReviewCommentPayloadInput!): ReviewCommentEntity!
   deleteReviewComment(id: ObjectID!): ReviewCommentEntity!
+  createPackage(payload: CreatePackageInput!): PackageEntity!
+  updatePackage(payload: UpdatePackagePayloadInput!): PackageEntity!
+  deletePackage(id: ObjectID!): PackageEntity!
 }
 
 union NotificationData = ReservationEntity | WeddingWebsiteEntity
@@ -241,6 +261,7 @@ enum NotificationType {
 scalar ObjectID
 
 type PackageEntity {
+  _id: ID!
   name: String!
   priority: PackagePriority!
   price: Float!
@@ -572,6 +593,18 @@ input UpdateGalleryInput {
   remove: [String!]
 }
 
+input UpdatePackageInput {
+  name: String
+  priority: PackagePriority
+  price: Float
+  description: String
+}
+
+input UpdatePackagePayloadInput {
+  id: ObjectID!
+  data: UpdatePackageInput!
+}
+
 input UpdatePersonServiceInput {
   name: String
   address: UpdateAddressInput
@@ -646,7 +679,7 @@ input UpdateWeddingWebsitePayloadInput {
   data: UpdateWeddingWebsiteInput!
 }
 
-union UserEntity = BusinessUserEntity | ClientUserEntity
+union UserEntity = BusinessUserEntity | ClientUserEntity | AdminUserEntity
 
 enum UserType {
   Admin
