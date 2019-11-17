@@ -37,7 +37,7 @@ export class IService {
   @field({ default: PackagePriority.Free })
   packagePriority: PackagePriority;
   @indexed
-  @field({ default: 0 })
+  @field({ default: 1 })
   rating: number;
   @indexed
   @field({ default: false })
@@ -50,7 +50,7 @@ export class IService {
   @indexed
   @field({ default: [] })
   reservedDays: Date[];
-  @field
+  @field({ default: 0 })
   popularity: number;
   @field({
     default: {
@@ -88,8 +88,16 @@ export const ServiceSchema = buildSchema(IService);
 export const PlaceServiceSchema = buildSchema(IPlaceService);
 export const PersonServiceSchema = buildSchema(IPersonService);
 
+ServiceSchema.post('findOneAndUpdate', function (doc, next) {
+  const { rating, statistics }: { rating: number, statistics: ServiceStatistics } = doc.toJSON();
+  const popularity = rating * ((statistics.pageHits) + (statistics.onGoingRequests * 5) + (statistics.reservations * 15));
+  doc.updateOne({ popularity }, () => {
+    next();
+  });
+});
+
 // always include business category because it is needed for type resolving
-ensureProjection(ServiceSchema, { businessCategory: true });
+ensureProjection(ServiceSchema, { businessCategory: true, rating: true, statistics: true });
 
 ServiceSchema.index(ConfigUtils.database.discriminatorKey);
 ServiceSchema.index({ 'address.city': 1 });

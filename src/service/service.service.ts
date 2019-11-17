@@ -170,6 +170,10 @@ export class ServiceService {
     return await this.serviceModel.countDocuments(query);
   }
 
+  async updateService(_id: ObjectID, payload: Partial<Service>) {
+    return await this.serviceModel.findByIdAndUpdate(_id, payload, { new: true });
+  }
+
   private async recordStat(ids: ObjectID[], key: string, count = 1) {
     await this.serviceModel.updateMany({ _id: { $in: ids } }, { $inc: { [`statistics.${key}`]: count } });
   }

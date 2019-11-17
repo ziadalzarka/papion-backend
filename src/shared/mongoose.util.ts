@@ -10,4 +10,5 @@ export function ensureProjection(schema: Schema, projection) {
   schema.pre('find', func);
   schema.pre('findOne', func);
   schema.pre('findOneAndUpdate', func);
+  schema.pre('findOneAndRemove', func);
 }

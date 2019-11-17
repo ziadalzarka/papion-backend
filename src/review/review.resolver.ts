@@ -30,6 +30,7 @@ export class ReviewResolver {
     @User() user: IUser,
     @Args({ name: 'payload', type: () => CreateReviewInput }, new ValidationPipe()) payload: CreateReviewInput) {
     await this.serviceService.validateServicePublished(payload.service);
+    await this.reviewService.validateReviewNotDuplicated({ service: payload.service, user: user._id });
     return await this.reviewService.createReview({ ...payload, user: user._id });
   }
 

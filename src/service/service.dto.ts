@@ -47,6 +47,8 @@ export class BaseServiceEntity extends DatabaseEntity {
   reviews: ReviewEntityPage;
   @Field(type => ServiceStatistics)
   statistics: ServiceStatistics;
+  @Field()
+  popularity: number;
 }
 
 @ObjectType()

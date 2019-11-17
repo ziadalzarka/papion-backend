@@ -43,6 +43,7 @@ type BaseServiceEntity {
   reservations: ReservationsPage!
   reviews: ReviewEntityPage!
   statistics: ServiceStatistics!
+  popularity: Float!
 }
 
 type BaseUserEntity {
@@ -279,6 +280,7 @@ type PersonServiceEntity {
   reservations(page: Float!): ReservationsPage!
   reviews(page: Float!): ReviewEntityPage!
   statistics: ServiceStatistics!
+  popularity: Float!
   image: String
   category: PersonCategory
 }
@@ -340,6 +342,7 @@ type PlaceServiceEntity {
   reservations(page: Float!): ReservationsPage!
   reviews(page: Float!): ReviewEntityPage!
   statistics: ServiceStatistics!
+  popularity: Float!
   coverImage: String
   category: PlaceCategory
   capacity: Float
